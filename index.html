@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>لعبة صيدها - الذاكرة العائلية</title>
     <style>
+        :root {
+            --cell-min-size-15: 100px; /* For size-15 grid */
+            --cell-min-size-18: 80px;  /* For size-18 grid */
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #e6f7ff;
             color: #222;
             text-align: center;
-            padding: 20px;
+            padding: clamp(10px, 3vw, 20px); /* Responsive padding */
             direction: rtl;
             display: flex;
             flex-direction: column;
@@ -18,9 +23,8 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي */
+            overflow-x: hidden; /* Prevent horizontal scroll */
             position: relative;
-            box-sizing: border-box; /* لضمان عدم تجاوز البادينج للحجم */
         }
 
         /* الملاحظة القانونية */
@@ -31,19 +35,18 @@
             width: 100%;
             background-color: #ffe0b2;
             color: #8d6e63;
-            padding: clamp(5px, 2vw, 15px) clamp(10px, 3vw, 20px);
-            font-size: clamp(0.7em, 1.5vw, 14px);
+            padding: clamp(5px, 2vw, 8px) clamp(10px, 3vw, 15px); /* Responsive padding */
+            font-size: clamp(12px, 1.5vw, 14px); /* Responsive font size */
             font-weight: bold;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             border-bottom: 1px solid #d7ccc8;
             line-height: 1.5;
             text-align: center;
-            box-sizing: border-box;
         }
         .legal-notice span {
             display: block;
-            margin-top: clamp(3px, 1vw, 5px);
+            margin-top: 5px;
             font-style: italic;
             font-weight: normal;
         }
@@ -63,7 +66,6 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease-out;
-            box-sizing: border-box;
         }
 
         .modal-overlay.show {
@@ -74,7 +76,7 @@
 
         .modal-content {
             background-color: #ffffff;
-            padding: clamp(20px, 5vw, 30px);
+            padding: clamp(20px, 5vw, 30px); /* Responsive padding */
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
             max-width: 600px;
@@ -85,7 +87,6 @@
             max-height: 90vh;
             overflow-y: auto;
             color: #333;
-            box-sizing: border-box;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
@@ -94,47 +95,43 @@
 
         .modal-content h2 {
             color: #007bff;
-            margin-bottom: clamp(15px, 3vw, 20px);
-            font-size: clamp(1.5em, 4vw, 2em);
+            margin-bottom: clamp(15px, 3vw, 20px); /* Responsive margin */
+            font-size: clamp(1.5em, 4vw, 2em); /* Responsive font size */
         }
 
         .modal-content ul {
             list-style: none;
             padding: 0;
-            margin: clamp(15px, 3vw, 20px) 0;
+            margin: clamp(15px, 4vw, 20px) 0;
         }
 
         .modal-content ul li {
-            margin-bottom: clamp(8px, 2vw, 10px);
-            font-size: clamp(0.9em, 2.5vw, 1.1em);
+            margin-bottom: 10px;
+            font-size: clamp(1em, 2.5vw, 1.1em); /* Responsive font size */
             text-align: right;
-            padding-right: clamp(5px, 2vw, 10px);
+            padding-right: 10px;
             border-right: 3px solid #007bff;
         }
 
         .modal-content p {
-            font-size: clamp(0.9em, 2.5vw, 1.1em);
-            margin-top: clamp(20px, 4vw, 25px);
+            font-size: clamp(1em, 2.5vw, 1.1em); /* Responsive font size */
+            margin-top: clamp(20px, 4vw, 25px); /* Responsive margin */
             font-weight: bold;
             color: #555;
         }
         .modal-content .button-group {
-            margin-top: clamp(20px, 4vw, 30px);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: clamp(10px, 2vw, 15px);
+            margin-top: clamp(20px, 5vw, 30px);
         }
         .modal-content button {
             background-color: #004080;
             color: white;
             border: none;
-            padding: clamp(12px, 3vw, 18px) clamp(25px, 6vw, 35px);
+            padding: clamp(12px, 4vw, 18px) clamp(25px, 6vw, 35px); /* Responsive padding */
             border-radius: 8px;
-            font-size: clamp(1em, 2.8vw, 1.3em);
+            font-size: clamp(1em, 3vw, 1.3em); /* Responsive font size */
             cursor: pointer;
             transition: background-color 0.3s ease;
-            margin: 0; /* Managed by button-group gap */
+            margin: 0 clamp(5px, 1.5vw, 10px); /* Responsive margin */
         }
         .modal-content button:hover {
             background-color: #003366;
@@ -143,58 +140,43 @@
         /* شاشة اختيار الفرق */
         #teamSelectionModal .team-options {
             display: flex;
+            flex-wrap: wrap; /* Allow wrapping */
             justify-content: center;
-            gap: clamp(15px, 4vw, 20px);
-            margin-top: clamp(20px, 4vw, 30px);
-            flex-wrap: wrap;
+            gap: clamp(10px, 3vw, 20px); /* Responsive gap */
+            margin-top: clamp(20px, 5vw, 30px);
         }
         #teamSelectionModal .team-options button {
-            font-size: clamp(1em, 2.8vw, 1.3em);
-            padding: clamp(12px, 3vw, 18px) clamp(25px, 6vw, 35px);
+            font-size: clamp(1em, 3vw, 1.3em); /* Responsive font size */
+            padding: clamp(12px, 4vw, 18px) clamp(25px, 6vw, 35px); /* Responsive padding */
         }
 
         /* شاشة تسمية الفرق */
         #teamNameInputModal .team-name-inputs {
             display: flex;
             flex-direction: column;
-            gap: clamp(10px, 2vw, 15px);
-            margin-top: clamp(15px, 3vw, 20px);
+            gap: clamp(10px, 3vw, 15px); /* Responsive gap */
+            margin-top: clamp(15px, 4vw, 20px);
         }
         #teamNameInputModal .team-name-inputs div {
             display: flex;
-            flex-direction: column; /* Stack label and input on small screens */
-            align-items: flex-start; /* Align label to start */
-            gap: clamp(5px, 1vw, 10px);
-        }
-        @media (min-width: 480px) { /* Adjust for wider mobile screens */
-            #teamNameInputModal .team-name-inputs div {
-                flex-direction: row; /* Side by side on wider screens */
-                align-items: center;
-            }
+            align-items: center;
+            gap: clamp(5px, 2vw, 10px); /* Responsive gap */
         }
         #teamNameInputModal .team-name-inputs label {
             font-weight: bold;
-            min-width: 80px;
+            min-width: clamp(60px, 15vw, 80px); /* Responsive min-width */
             text-align: right;
             color: #007bff;
-            font-size: clamp(0.9em, 2.2vw, 1em);
+            font-size: clamp(0.9em, 2vw, 1em); /* Responsive font size */
         }
         #teamNameInputModal .team-name-inputs input[type="text"] {
             flex-grow: 1;
-            padding: clamp(8px, 2vw, 12px);
+            padding: clamp(8px, 2.5vw, 12px); /* Responsive padding */
             border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: clamp(0.9em, 2.2vw, 1.1em);
+            font-size: clamp(0.9em, 2.5vw, 1.1em); /* Responsive font size */
             text-align: right;
-            width: 100%; /* Ensure input takes full width */
-            box-sizing: border-box;
         }
-        #teamNameInputModal .team-name-inputs input[type="text"]:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-
 
         /* الواجهة الرئيسية للعبة */
         .game-area {
@@ -203,27 +185,24 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 1000px; /* زيادة عرض المنطقة لتناسب المربعات الأكبر على الشاشات الكبيرة */
-            padding: 0 clamp(10px, 2vw, 20px);
-            box-sizing: border-box;
+            max-width: 900px;
         }
 
         .scoreboard {
             display: flex;
             justify-content: center;
-            gap: clamp(10px, 3vw, 20px);
-            margin: clamp(15px, 3vw, 20px) 0 clamp(8px, 2vw, 10px);
+            gap: clamp(10px, 3vw, 20px); /* Responsive gap */
+            margin: clamp(10px, 3vw, 20px) 0 clamp(5px, 2vw, 10px); /* Responsive margins */
             flex-wrap: wrap;
-            width: 100%; /* Ensure scoreboard takes full width */
         }
 
         .team {
-            padding: clamp(8px, 2.5vw, 12px) clamp(15px, 4vw, 20px);
+            padding: clamp(8px, 2.5vw, 12px) clamp(15px, 4vw, 20px); /* Responsive padding */
             border-radius: 12px;
             background: #e0f7fa;
             font-weight: bold;
-            font-size: clamp(0.9em, 2.5vw, 1.1em);
-            min-width: clamp(90px, 20vw, 120px);
+            font-size: clamp(1em, 2.5vw, 1.1em); /* Responsive font size */
+            min-width: clamp(100px, 20vw, 120px); /* Responsive min-width */
             border: 3px solid transparent;
             transition: all 0.2s ease-in-out;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
@@ -231,19 +210,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-sizing: border-box;
         }
         .team span {
-            font-size: clamp(1.4em, 4vw, 1.8em);
+            font-size: clamp(1.5em, 4vw, 1.8em); /* Responsive font size */
             margin-top: 5px;
             color: #004085;
         }
-
-        /* ألوان الفرق */
-        .blue { background-color: #cce5ff; color: #004085; }
-        .red { background-color: #f8d7da; color: #721c24; }
-        .green { background-color: #d4edda; color: #155724; }
-        .orange { background-color: #fff3cd; color: #856404; }
 
         /* تمييز الفريق الذي عليه الدور */
         .team.active {
@@ -253,44 +225,30 @@
         }
 
         .controls {
-            margin: clamp(15px, 3vw, 20px) 0;
+            margin: clamp(15px, 4vw, 20px) 0;
             display: flex;
+            flex-wrap: wrap; /* Allow wrapping */
             justify-content: center;
-            gap: clamp(10px, 2.5vw, 15px);
-            flex-wrap: wrap;
-            width: 100%;
+            gap: clamp(10px, 3vw, 15px); /* Responsive gap */
         }
 
         .controls button {
             background-color: #004080;
             color: white;
             border: none;
-            padding: clamp(12px, 3vw, 18px) clamp(25px, 6vw, 35px);
+            padding: clamp(12px, 4vw, 18px) clamp(25px, 6vw, 35px); /* Responsive padding */
             border-radius: 10px;
-            font-size: clamp(1em, 2.8vw, 1.3em);
+            font-size: clamp(1em, 3vw, 1.3em); /* Responsive font size */
             margin: 0;
             cursor: pointer;
             transition: background 0.3s ease, transform 0.2s ease;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            flex-shrink: 0; /* Prevent buttons from shrinking */
-        }
-
-        .controls button:hover {
-            background-color: #003366;
-            transform: translateY(-2px);
-        }
-
-        .controls button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
         }
 
         .timer {
-            font-size: clamp(20px, 5vw, 28px);
+            font-size: clamp(20px, 5vw, 28px); /* Responsive font size */
             font-weight: bold;
-            margin-bottom: clamp(10px, 2.5vw, 15px);
+            margin-bottom: clamp(10px, 3vw, 15px); /* Responsive margin */
             color: #333;
             min-height: 35px;
         }
@@ -298,12 +256,10 @@
         /* التخطيط الافتراضي للشبكة */
         .grid {
             display: grid;
-            grid-gap: clamp(10px, 2.5vw, 20px);
+            grid-gap: clamp(10px, 2vw, 20px); /* Responsive gap */
             justify-content: center;
-            margin: clamp(15px, 3vw, 20px) auto;
+            margin: clamp(10px, 3vw, 20px) auto;
             max-width: fit-content;
-            width: 100%; /* ليتكيف مع الشاشات الصغيرة */
-            box-sizing: border-box;
         }
 
         /* أحجام الخلايا الافتراضية */
@@ -323,72 +279,33 @@
             padding: 5px;
             box-sizing: border-box;
         }
-        .cell:not(.matched):not(.empty):hover {
-            transform: scale(1.05);
-        }
 
-        /* الخلايا الفارغة */
-        .cell.empty {
-            background-color: transparent;
-            box-shadow: none;
-            cursor: default;
-            pointer-events: none;
-        }
-
-        .cell.hidden {
-            background-color: #0055AA;
-            color: transparent;
-            cursor: pointer;
-        }
-
-        .cell.matched {
-            background-color: #a3cfbb;
-            cursor: default;
-            pointer-events: none;
-            transform: none;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-        }
-
-        /* نمط خاص لبطاقة +/- 1 عند الكشف عنها في مرحلة اللعب */
-        .cell.value-revealed {
-            font-weight: bold;
-            font-size: clamp(2.5em, 8vw, 4em); /* Adjust font size for responsiveness */
-            transform: none;
-            color: white !important;
-        }
-        .cell.value-revealed.negative {
-            background-color: #dc3545;
-        }
-        .cell.value-revealed.positive {
-            background-color: #28a745;
-        }
-
-        /* أحجام الشبكة حسب الجولة */
-        /* جولات 15 مربعًا -> تخطيط 3x5 */
+        /* أحجام الشبكة حسب الجولة - تم التعديل للاستجابة */
         .grid.size-15 {
-            grid-template-columns: repeat(auto-fit, minmax(clamp(80px, 18vw, 140px), 1fr)); /* Responsive grid */
-            grid-template-rows: auto;
+            grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-15), 1fr));
+            grid-template-rows: auto; /* Allow rows to size themselves */
+            width: 100%; /* Ensure grid takes full width */
+            max-width: calc(5 * var(--cell-min-size-15) + 4 * clamp(10px, 2vw, 20px)); /* Max width based on 5 cells */
         }
         .grid.size-15 .cell {
-            width: auto; /* Let auto-fit handle width */
-            height: clamp(80px, 18vw, 140px);
-            aspect-ratio: 1 / 1; /* Keep aspect ratio square */
+            width: clamp(var(--cell-min-size-15), 20vw, 140px); /* Responsive width */
+            height: clamp(var(--cell-min-size-15), 20vw, 140px); /* Responsive height */
         }
 
-        /* جولات 18 مربعًا -> تخطيط 3x6 */
         .grid.size-18 {
-            grid-template-columns: repeat(auto-fit, minmax(clamp(70px, 15vw, 110px), 1fr)); /* Responsive grid */
-            grid-template-rows: auto;
+            grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-18), 1fr));
+            grid-template-rows: auto; /* Allow rows to size themselves */
+            width: 100%; /* Ensure grid takes full width */
+            max-width: calc(6 * var(--cell-min-size-18) + 5 * clamp(10px, 2vw, 20px)); /* Max width based on 6 cells */
         }
         .grid.size-18 .cell {
-            width: auto; /* Let auto-fit handle width */
-            height: clamp(70px, 15vw, 110px);
-            aspect-ratio: 1 / 1; /* Keep aspect ratio square */
+            width: clamp(var(--cell-min-size-18), 15vw, 110px); /* Responsive width */
+            height: clamp(var(--cell-min-size-18), 15vw, 110px); /* Responsive height */
         }
 
         /* نمط خاص للخلايا التي تحتوي على نصوص أو أرقام حسابية */
         .cell.text-content {
-            font-size: clamp(20px, 4.5vw, 35px);
+            font-size: clamp(20px, 4vw, 35px); /* Responsive font size */
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -402,30 +319,108 @@
         .cell[data-round-type="math"],
         .cell[data-round-type="letter-word"],
         .cell[data-round-type="incomplete-word"] {
-            font-size: clamp(18px, 4vw, 30px);
+            font-size: clamp(18px, 3.5vw, 30px); /* Responsive font size */
         }
         /* تعديل خاص لحجم خط الإيموجي والنجمة */
         .cell[data-round-type="emoji"],
         .cell[data-special-type="star-placeholder"] {
-            font-size: clamp(30px, 6vw, 45px);
+            font-size: clamp(30px, 7vw, 45px); /* Responsive font size */
         }
-
 
         /* مكان وتصميم رسالة "دور الفريق" */
         .result {
-            margin-top: clamp(8px, 2vw, 10px);
-            margin-bottom: clamp(15px, 3vw, 20px);
-            font-size: clamp(18px, 4vw, 24px);
+            margin-top: clamp(5px, 2vw, 10px);
+            margin-bottom: clamp(10px, 3vw, 20px);
+            font-size: clamp(18px, 4vw, 24px); /* Responsive font size */
             font-weight: bold;
             color: #007bff;
             min-height: 30px;
         }
 
+        /* شاشة العد التنازلي الفخمة */
+        #countdownOverlay {
+            font-size: clamp(3em, 10vw, 5em); /* Responsive font size */
+        }
+
+        #countdownText {
+            margin-bottom: clamp(10px, 3vw, 20px);
+            font-size: clamp(0.3em, 1.5vw, 0.5em); /* Responsive font size */
+        }
+
+        #countdownNumber {
+            font-size: clamp(1.5em, 5vw, 2em); /* Responsive font size */
+        }
+
+        /* شاشة الفوز النهائية */
+        #finalWinnerModal h2 {
+            font-size: clamp(2.5em, 8vw, 4em); /* Responsive font size */
+            margin-bottom: clamp(20px, 5vw, 30px);
+        }
+        #finalWinnerModal p {
+            font-size: clamp(1.5em, 4vw, 2em); /* Responsive font size */
+            margin-bottom: clamp(25px, 6vw, 40px);
+        }
+        #finalWinnerModal button {
+            padding: clamp(15px, 5vw, 20px) clamp(30px, 8vw, 40px);
+            font-size: clamp(1.2em, 3.5vw, 1.5em);
+            margin: 0 clamp(5px, 2vw, 10px);
+        }
+
+        /* Small screen adjustments */
+        @media (max-width: 768px) {
+            .grid {
+                grid-gap: clamp(8px, 1.5vw, 15px); /* Slightly smaller gap on smaller screens */
+            }
+            .grid.size-15 .cell {
+                width: clamp(var(--cell-min-size-15), 25vw, 140px);
+                height: clamp(var(--cell-min-size-15), 25vw, 140px);
+            }
+            .grid.size-18 .cell {
+                width: clamp(var(--cell-min-size-18), 20vw, 110px);
+                height: clamp(var(--cell-min-size-18), 20vw, 110px);
+            }
+            .cell.text-content {
+                font-size: clamp(16px, 3.5vw, 35px);
+            }
+            .cell[data-round-type="words"],
+            .cell[data-round-type="math"],
+            .cell[data-round-type="letter-word"],
+            .cell[data-round-type="incomplete-word"] {
+                font-size: clamp(14px, 3vw, 30px);
+            }
+            .cell[data-round-type="emoji"],
+            .cell[data-special-type="star-placeholder"] {
+                font-size: clamp(25px, 6vw, 45px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-gap: clamp(5px, 1vw, 10px); /* Even smaller gap on very small screens */
+            }
+            .grid.size-15 {
+                max-width: calc(3 * var(--cell-min-size-15) + 2 * clamp(5px, 1vw, 10px)); /* Limit to 3 columns on tiny screens */
+            }
+            .grid.size-18 {
+                max-width: calc(4 * var(--cell-min-size-18) + 3 * clamp(5px, 1vw, 10px)); /* Limit to 4 columns on tiny screens */
+            }
+            .cell.value-revealed {
+                font-size: clamp(2em, 8vw, 4em); /* Adjust for smaller screens */
+            }
+            .team {
+                min-width: unset; /* Remove min-width on very small screens */
+                flex-basis: 45%; /* Allow teams to take more width */
+            }
+            .scoreboard {
+                gap: clamp(5px, 2vw, 10px);
+            }
+        }
+        
         /* تأثير الحروف العربية المتساقطة */
         .falling-letter {
             position: absolute;
             top: -50px;
-            font-size: clamp(1.5em, 5vw, 2.5em);
+            font-size: 2.5em;
             color: rgba(0, 51, 102, 0.3);
             animation: fall linear infinite;
             pointer-events: none;
@@ -441,86 +436,6 @@
             100% { transform: translateY(100vh) translateX(0) scale(1.2); opacity: 0; }
         }
 
-        /* شاشة العد التنازلي الفخمة */
-        #countdownOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: clamp(3em, 8vw, 5em);
-            font-weight: bold;
-            z-index: 3000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        #countdownOverlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #countdownText {
-            margin-bottom: clamp(10px, 3vw, 20px);
-            font-size: 0.5em;
-            text-align: center;
-        }
-
-        #countdownNumber {
-            font-size: 2em;
-            animation: pulse 1s infinite alternate;
-        }
-
-        @keyframes pulse {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        /* شاشة الفوز النهائية */
-        #finalWinnerModal {
-            color: white;
-            z-index: 4000;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-        }
-
-        #finalWinnerModal h2 {
-            font-size: clamp(2.5em, 8vw, 4em);
-            margin-bottom: clamp(20px, 5vw, 30px);
-            color: #ffd700;
-            text-shadow: 3px 3px 10px rgba(255,165,0,0.8);
-        }
-        #finalWinnerModal p {
-            font-size: clamp(1.2em, 4vw, 2em);
-            margin-bottom: clamp(25px, 6vw, 40px);
-        }
-
-        #finalWinnerModal button {
-            padding: clamp(15px, 4vw, 20px) clamp(30px, 8vw, 40px);
-            font-size: clamp(1.2em, 3.5vw, 1.5em);
-        }
-
-        /* تأثير القصاصات */
-        .confetti {
-            position: absolute;
-            width: clamp(5px, 2vw, 10px);
-            height: clamp(5px, 2vw, 10px);
-            background-color: #f00;
-            animation: fallConfetti 5s linear forwards;
-            opacity: 0;
-            border-radius: 50%;
-        }
-
-        @keyframes fallConfetti {
-            0% { transform: translateY(-100px) rotateZ(0deg); opacity: 1; }
-            100% { transform: translateY(120vh) rotateZ(720deg); opacity: 0; }
-        }
     </style>
 </head>
 <body>
@@ -666,24 +581,27 @@
             { mathPairs: [["10/2", "5"], ["12/3", "4"], ["15/5", "3"], ["18/6", "3"], ["20/4", "5"], ["24/8", "3"], ["28/7", "4"]], gridSizeClass: "size-15", timer: 15, category: roundCategories[11], specialSquaresCount: 1, totalEmojiPairs: 7, type: "math" }
         ];
 
-        let allGameRounds = [group1Rounds, group2Rounds, group3Rounds];
+        let allGameRounds = [group1Rounds, group2Rounds, group3Rounds]; // ترتيب المجموعات
+
+        // بيانات جولة التعادل
         const tieBreakerEmojis = [
             "505", "515", "525", "535", "545", "555", "575"
         ];
         const tieBreakerTimer = 5;
-        const tieBreakerSpecialSquaresCount = 1;
-        const tieBreakerFixedValue = 4;
+        const tieBreakerSpecialSquaresCount = 1; // جولة التعادل مربع خاص واحد فقط
+        const tieBreakerFixedValue = 4; // قيمة ثابتة 4 لجولة التعادل (يمكن أن تكون +4 أو -4)
         const tieBreakerTotalEmojiPairs = 7;
 
-        const interRoundDelay = 10;
+        const interRoundDelay = 10; // وقت العد التنازلي بين الجولات (تم التعديل إلى 10 ثواني)
 
-        let teamNames = {
+        let teamNames = { // Default team names, will be updated by user input
             "blue": "الفريق الأزرق",
             "red": "الفريق الأحمر",
             "green": "الفريق الأخضر",
             "orange": "الفريق البرتقالي"
         };
         const teamColors = ["blue", "red", "green", "orange"];
+        // Define actual CSS colors for team names for consistency
         const teamCssColors = {
             "blue": "#004085",
             "red": "#721c24",
@@ -694,52 +612,49 @@
         let currentTeamIndex = 0;
         let startingTeamIndexForRound = 0;
 
-        let currentGroupIndex = 0;
-        let roundIndex = 0;
+        let currentGroupIndex = 0; // مؤشر للمجموعة الحالية (0 للمجموعة الأولى، 1 للمجموعة الثانية)
+        let roundIndex = 0; // مؤشر للجولة داخل المجموعة الحالية
 
         let board = [];
         let firstPick = null;
         let lockBoard = false;
-        let scores = {};
-        let matchedPairsCount = 0;
+        let scores = {}; // النقاط الآن تراكمية
+        let matchedPairsCount = 0; // لعد الأزواج العادية المطابقة فقط
         let timerInterval = null;
         let isTieBreakerRound = false;
-        let gameInitialized = false;
-        let isTransitioning = false;
+        let gameInitialized = false; // متغير جديد لتتبع ما إذا كانت اللعبة مهيأة (الواجهة ظاهرة ومستعدة للبدء)
+        let isTransitioning = false; // لمنع تكرار العداد
 
         const adviceModal = document.getElementById("adviceModal");
         const instructionsModal = document.getElementById("instructionsModal");
         const teamSelectionModal = document.getElementById("teamSelectionModal");
-        const teamNameInputModal = document.getElementById("teamNameInputModal");
-        const teamNameInputsContainer = document.getElementById("teamNameInputsContainer");
+        const teamNameInputModal = document.getElementById("teamNameInputModal"); // New modal for team names
+        const teamNameInputsContainer = document.getElementById("teamNameInputsContainer"); // Container for team name inputs
         const gameArea = document.querySelector(".game-area");
-
         const grid = document.getElementById("grid");
         const timerContainer = document.getElementById("timerContainer");
         const resultDisplay = document.getElementById("result");
         const startGameBtn = document.getElementById("startGameBtn");
-        const nextGroupBtn = document.getElementById("nextGroupBtn");
+        const nextGroupBtn = document.getElementById("nextGroupBtn"); // زر المجموعة التالية
         const resetGameBtn = document.getElementById("resetGameBtn");
         const scoreboardDiv = document.getElementById("scoreboard");
         let scoreBoardElements = {};
-
         const countdownOverlay = document.getElementById("countdownOverlay");
         const countdownText = document.getElementById("countdownText");
         const countdownNumber = document.getElementById("countdownNumber");
-
         const finalWinnerModal = document.getElementById("finalWinnerModal");
         const finalWinnerText = document.getElementById("finalWinnerText");
         const finalTieText = document.getElementById("finalTieText");
         const playAgainBtn = document.getElementById("playAgainBtn");
         const startTieBreakerBtn = document.getElementById("startTieBreakerBtn");
-
-        const resetConfirmationModal = document.getElementById("resetConfirmationModal");
+        const resetConfirmationModal = document.getElementById("resetConfirmationModal"); // New modal
         const confirmResetBtn = document.getElementById("confirmResetBtn");
         const cancelResetBtn = document.getElementById("cancelResetBtn");
 
         const arabicLetters = ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'];
         const confettiColors = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548", "#9E9E9E", "#607D8B"];
 
+        // --- وظائف تأثيرات الخلفية والحروف المتساقطة ---
         function createFallingLetter() {
             const letter = document.createElement('span');
             letter.textContent = arabicLetters[Math.floor(Math.random() * arabicLetters.length)];
@@ -758,6 +673,7 @@
             createFallingLetter();
         }
 
+        // --- وظائف المودال (النوافذ المنبثقة) ---
         function showAdviceModal() {
             adviceModal.classList.add('show');
             gameArea.style.display = 'none';
@@ -790,16 +706,17 @@
             clearConfetti();
         }
 
-        let selectedNumTeams = 0;
+        let selectedNumTeams = 0; // Store the number of teams selected
 
         function selectTeams(numTeams) {
-            selectedNumTeams = numTeams;
+            selectedNumTeams = numTeams; // Store the number of teams
             hideAllModals();
-            showTeamNameInputModal(numTeams);
+            showTeamNameInputModal(numTeams); // Show team name input modal
         }
 
         function showTeamNameInputModal(numTeams) {
-            teamNameInputsContainer.innerHTML = '';
+            teamNameInputsContainer.innerHTML = ''; // Clear previous inputs
+            // Define default names based on color order
             const defaultNames = {
                 "blue": "الفريق الأزرق",
                 "red": "الفريق الأحمر",
@@ -807,17 +724,17 @@
                 "orange": "الفريق البرتقالي"
             };
             for (let i = 0; i < numTeams; i++) {
-                const teamColor = teamColors[i];
+                const teamColor = teamColors[i]; // Get the color code
                 const inputDiv = document.createElement('div');
                 const label = document.createElement('label');
-                label.textContent = `${defaultNames[teamColor]}:`;
+                label.textContent = `${defaultNames[teamColor]}:`; // Use default name for label
                 label.setAttribute('for', `teamName${i}`);
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = `teamName${i}`;
                 input.name = `teamName${i}`;
-                input.value = teamNames[teamColor] || defaultNames[teamColor];
-                input.dataset.teamColor = teamColor;
+                input.value = teamNames[teamColor] || defaultNames[teamColor]; // Pre-fill with current custom name or default
+                input.dataset.teamColor = teamColor; // Store the color in dataset
                 inputDiv.appendChild(label);
                 inputDiv.appendChild(input);
                 teamNameInputsContainer.appendChild(inputDiv);
@@ -829,19 +746,20 @@
             const teamNameInputs = teamNameInputsContainer.querySelectorAll('input[type="text"]');
             teamNameInputs.forEach(input => {
                 const teamColor = input.dataset.teamColor;
-                teamNames[teamColor] = input.value.trim() || teamNames[teamColor];
+                teamNames[teamColor] = input.value.trim() || teamNames[teamColor]; // Update with custom name, or keep current default if empty
             });
             hideAllModals();
-            initializeGameSetup();
+            initializeGameSetup(); // Proceed to game setup after names are confirmed
         }
 
         function initializeGameSetup() {
-            activeTeams = teamColors.slice(0, selectedNumTeams);
+            activeTeams = teamColors.slice(0, selectedNumTeams); // Use selectedNumTeams
             scores = {};
             activeTeams.forEach(team => {
-                scores[team] = 0;
+                scores[team] = 0; // إعادة تعيين النقاط عند بدء لعبة جديدة
             });
 
+            // تحديث لوحة النتائج
             scoreboardDiv.innerHTML = '';
             activeTeams.forEach(team => {
                 const teamDiv = document.createElement('div');
@@ -856,32 +774,36 @@
                 if (elem) scoreBoardElements[color] = elem;
             });
 
+            // إعادة تعيين مؤشرات الجولة والفريق للحالة الابتدائية
             currentTeamIndex = 0;
             startingTeamIndexForRound = 0;
-            currentGroupIndex = 0;
-            roundIndex = 0;
+            currentGroupIndex = 0; // نبدأ دائمًا من المجموعة الأولى
+            roundIndex = 0; // ونبدأ من الجولة الأولى داخلها
             isTieBreakerRound = false;
             matchedPairsCount = 0;
 
+            // إنشاء اللوحة للمرة الأولى هنا، ولكن ستكون الخلايا مخفية افتراضيًا
             const initialRoundData = allGameRounds[currentGroupIndex][roundIndex];
             createBoard(initialRoundData);
-            hideAllCards();
-            disableClicking();
-            timerContainer.textContent = "";
+            hideAllCards(); // تأكد من إخفائها مباشرة بعد الإنشاء
+            disableClicking(); // تعطيل النقر حتى بدء الجولة الفعلية
+            timerContainer.textContent = ""; // مسح نص المؤقت
             resultDisplay.textContent = `دور فريق: ${teamNames[activeTeams[currentTeamIndex]]}`;
-            updateActiveTeamDisplay();
+            updateActiveTeamDisplay(); // تحديث عرض الفريق النشط
 
+            // عرض منطقة اللعب كاملة الآن
             gameArea.style.display = 'flex';
-            startGameBtn.textContent = "بدء الجولة";
+            startGameBtn.textContent = "بدء الجولة"; // التأكد من نص الزر
             startGameBtn.style.display = 'inline-block';
-            nextGroupBtn.style.display = 'none';
+            nextGroupBtn.style.display = 'none'; // إخفاء زر المجموعة التالية في البداية
             resetGameBtn.style.display = 'inline-block';
-            enableControls();
-            gameInitialized = true;
-            isTransitioning = false;
+            enableControls(); // تمكين الأزرار عند هذه النقطة
+            gameInitialized = true; // اللعبة الآن مهيأة وجاهزة للبدء
+            isTransitioning = false; // تأكيد عدم وجود انتقال عند البدء
             console.log("Game initialized and ready to start.");
         }
 
+        // --- وظائف اللعبة الأساسية ---
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -889,651 +811,566 @@
             }
         }
 
-        function getTotalCellsForGridClass(gridClass) {
-            switch (gridClass) {
-                case "size-15": return 15;
-                case "size-18": return 18;
-                default: return 0;
-            }
-        }
-
-        function revealCell(cell) {
-            if (cell.classList.contains('empty') || cell.classList.contains('matched')) return;
-            cell.classList.remove("hidden");
-            if (cell.dataset.specialType === 'star-placeholder') {
-                cell.textContent = '⭐';
-                cell.style.color = '#222';
-                cell.style.filter = 'none';
-                cell.style.textShadow = 'none';
-                cell.style.backgroundColor = '#ffffff';
-                cell.style.fontSize = 'clamp(30px, 6vw, 45px)'; // Ensure responsiveness for star
-            }
-        }
-
-        function hideCell(cell) {
-            if (cell.dataset.specialType === 'star-placeholder') {
-                cell.textContent = board[cell.dataset.index].value;
-                cell.style.color = 'transparent';
-                cell.style.backgroundColor = '#0055AA';
-                cell.classList.add("hidden");
-            } else {
-                cell.textContent = board[cell.dataset.index].value; // To ensure value is present if needed for debug
-                cell.style.color = 'transparent';
-                cell.style.backgroundColor = '#0055AA';
-                cell.classList.add("hidden");
-            }
-        }
-
-        function hideAllCards() {
-            const cells = document.querySelectorAll('.cell:not(.empty)');
-            cells.forEach(cell => {
-                hideCell(cell);
-            });
-        }
-
-        function disableClicking() {
-            grid.style.pointerEvents = 'none';
-        }
-
-        function enableClicking() {
-            grid.style.pointerEvents = 'auto';
-        }
-
         function createBoard(roundData) {
             grid.innerHTML = '';
+            grid.className = 'grid ' + roundData.gridSizeClass;
             board = [];
-            grid.className = 'grid';
-            grid.classList.add(roundData.gridSizeClass);
+            firstPick = null;
+            lockBoard = false;
 
-            let values = [];
+            let contents = [];
+            let specialSquares = [];
+
             if (roundData.type === "emoji") {
-                values = [...roundData.emojis, ...roundData.emojis];
+                contents = [...roundData.emojis, ...roundData.emojis];
             } else if (roundData.type === "words" || roundData.type === "math") {
                 roundData.textPairs.forEach(pair => {
-                    values.push(pair[0], pair[1]);
+                    contents.push(pair[0]);
+                    contents.push(pair[1]);
                 });
             } else if (roundData.type === "letter-word") {
                 roundData.letterWordPairs.forEach(pair => {
-                    values.push(pair[0], pair[1]);
+                    contents.push(pair[0]);
+                    contents.push(pair[1]);
                 });
             } else if (roundData.type === "incomplete-word") {
                 roundData.incompleteWordPairs.forEach(pair => {
-                    values.push(pair[0], pair[1]);
+                    contents.push(pair[0]); // الكلمة كاملة
+                    contents.push(pair[1]); // الكلمة الناقصة
                 });
             } else if (isTieBreakerRound) {
-                values = [...tieBreakerEmojis, ...tieBreakerEmojis];
+                contents = [...tieBreakerEmojis, ...tieBreakerEmojis];
             }
 
-            shuffle(values);
+            shuffle(contents);
 
-            const totalCells = getTotalCellsForGridClass(roundData.gridSizeClass);
-            const numContentCells = values.length;
-            const numEmptyCells = totalCells - numContentCells;
+            // Add special squares
+            for (let i = 0; i < roundData.specialSquaresCount; i++) {
+                specialSquares.push({
+                    type: "star",
+                    value: (Math.random() < 0.5 ? 1 : -1) * (isTieBreakerRound ? tieBreakerFixedValue : getRandomStarValue(currentGroupIndex))
+                });
+            }
 
-            let shuffledContent = [...values];
-            let fullBoardContent = [];
+            // Fill the board with placeholders for now to determine total cells
+            let totalCells = (roundData.type === "emoji" || isTieBreakerRound) ? (roundData.totalEmojiPairs * 2) : (roundData.totalEmojiPairs * 2);
+            totalCells += specialSquares.length;
 
-            // Add content cells
-            shuffledContent.forEach(val => {
-                fullBoardContent.push({ value: val, matched: false, type: roundData.type, specialType: null });
+            let cellsContent = [];
+            for(let i=0; i<contents.length; i++) {
+                cellsContent.push({ value: contents[i], type: roundData.type });
+            }
+            // Add star placeholders
+            specialSquares.forEach(star => {
+                cellsContent.push({ value: '⭐', type: 'special', specialType: 'star-placeholder', originalStarValue: star.value });
             });
 
-            // Add empty cells
-            for (let i = 0; i < numEmptyCells; i++) {
-                fullBoardContent.push({ value: '', matched: true, type: 'empty', specialType: null });
-            }
+            shuffle(cellsContent); // Shuffle all content (regular and special)
 
-            shuffle(fullBoardContent);
-
-            // Place special squares (star)
-            let starPlacedCount = 0;
-            const starValue = isTieBreakerRound ? tieBreakerFixedValue : getRandomStarValue();
-
-            // Find valid indices for special squares
-            let possibleStarIndices = [];
-            for (let i = 0; i < fullBoardContent.length; i++) {
-                if (fullBoardContent[i].type !== 'empty') {
-                    possibleStarIndices.push(i);
-                }
-            }
-            shuffle(possibleStarIndices); // Randomize positions for stars
-
-            for (let i = 0; i < roundData.specialSquaresCount && possibleStarIndices.length > 0; i++) {
-                const starIndex = possibleStarIndices.pop(); // Take a random available index
-                fullBoardContent[starIndex] = { value: starValue, matched: false, type: 'special', specialType: 'star-placeholder' };
-                starPlacedCount++;
-            }
-
-            board = fullBoardContent; // Update the global board with special squares
-
-            board.forEach((item, index) => {
+            cellsContent.forEach((cellData, index) => {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
-                if (item.type === 'empty') {
-                    cell.classList.add('empty');
-                } else {
-                    cell.classList.add('hidden', 'text-content'); // Add text-content class by default
-                    cell.dataset.index = index;
-                    cell.dataset.value = item.value;
-                    cell.dataset.roundType = item.type; // Store round type for specific styling
-                    if (item.specialType === 'star-placeholder') {
-                        cell.dataset.specialType = 'star-placeholder';
-                        cell.style.fontSize = 'clamp(30px, 6vw, 45px)'; // Ensure star size is responsive
-                    }
-                    cell.addEventListener('click', () => pickCard(cell));
+                cell.dataset.index = index;
+                cell.dataset.value = cellData.value;
+                cell.dataset.type = cellData.type;
+
+                if (cellData.specialType) {
+                    cell.dataset.specialType = cellData.specialType;
+                    cell.dataset.originalStarValue = cellData.originalStarValue;
                 }
+
+                // Add text-content class if it's not an emoji round
+                if (cellData.type !== "emoji") {
+                    cell.classList.add('text-content');
+                }
+
+                board.push(cell);
                 grid.appendChild(cell);
+            });
+
+            matchedPairsCount = 0; // Reset matched pairs count for the new round
+        }
+
+
+        function hideAllCards() {
+            board.forEach(cell => {
+                cell.textContent = cell.dataset.index + 1; // Show numbers
+                cell.classList.remove('matched', 'value-revealed', 'negative', 'positive');
+                cell.classList.add('hidden'); // Hide content
+                cell.onclick = () => pickCard(cell); // Re-enable clicks
             });
         }
 
-        function getRandomStarValue() {
-            const currentRound = allGameRounds[currentGroupIndex][roundIndex];
-            const baseValue = Math.floor(currentGroupIndex * 2) + 1; // 1 for Group 1, 3 for Group 2, 5 for Group 3
-            const value = Math.floor(Math.random() * baseValue) + 1;
-            return Math.random() < 0.5 ? value : -value;
-        }
-
-        function pickCard(cell) {
-            if (lockBoard || cell === firstPick || cell.classList.contains('matched') || cell.classList.contains('empty')) return;
-
-            revealCell(cell);
-
-            if (!firstPick) {
-                firstPick = cell;
-                return;
-            }
-
-            let secondPick = cell;
-            lockBoard = true; // Lock board after two cards are picked
-
-            if (firstPick.dataset.specialType === 'star-placeholder') {
-                handleStarCard(firstPick);
-                return;
-            } else if (secondPick.dataset.specialType === 'star-placeholder') {
-                handleStarCard(secondPick);
-                return;
-            }
-
-            // Normal matching logic
-            if (firstPick.dataset.value === secondPick.dataset.value) {
-                // It's a match!
-                matchedPairsCount++;
-                activeTeams[currentTeamIndex] = activeTeams[currentTeamIndex]; // Ensure current team exists
-                scores[activeTeams[currentTeamIndex]] += 1; // Add 1 point for a match
-                updateScoreboard();
-
-                firstPick.classList.add('matched');
-                secondPick.classList.add('matched');
-                board[firstPick.dataset.index].matched = true;
-                board[secondPick.dataset.index].matched = true;
-
-                resetBoard(); // Reset for next pick
-
-                const currentRound = isTieBreakerRound ?
-                    { totalEmojiPairs: tieBreakerTotalEmojiPairs, specialSquaresCount: tieBreakerSpecialSquaresCount } :
-                    allGameRounds[currentGroupIndex][roundIndex];
-                const expectedMatches = currentRound.totalEmojiPairs;
-                const totalCellsToMatch = (expectedMatches * 2) + currentRound.specialSquaresCount;
-                const matchedCells = document.querySelectorAll('.cell.matched').length;
-
-                if (matchedCells >= totalCellsToMatch) {
-                    endRound();
+        function revealAllCards() {
+            board.forEach(cell => {
+                if (!cell.classList.contains('matched')) {
+                    cell.textContent = cell.dataset.value; // Show actual content
+                    cell.classList.remove('hidden'); // Remove hidden class
                 }
-            } else {
-                // Not a match
-                setTimeout(() => {
-                    hideCell(firstPick);
-                    hideCell(secondPick);
-                    resetBoard();
-                    nextTurn();
-                }, 1000);
-            }
+            });
         }
 
-        function handleStarCard(starCard) {
-            const value = parseInt(starCard.dataset.value);
-            const team = activeTeams[currentTeamIndex];
-
-            // Apply points
-            scores[team] += value;
-            updateScoreboard();
-
-            // Animate card to show value
-            starCard.textContent = value > 0 ? `+${value}` : `${value}`;
-            starCard.classList.add('value-revealed', value > 0 ? 'positive' : 'negative');
-            starCard.style.color = 'white'; // Ensure text color is white for revealed value
-
-            // Mark as matched and disable further interaction
-            starCard.classList.add('matched');
-            board[starCard.dataset.index].matched = true;
-            matchedPairsCount++; // Count special squares for round completion
-
+        function hideSpecificCards(card1, card2) {
+            lockBoard = true;
             setTimeout(() => {
-                // If the round is not over, visually reset the star card after revealing
-                if (!isRoundOver()) {
-                    starCard.classList.remove('value-revealed', 'positive', 'negative');
-                    starCard.textContent = board[starCard.dataset.index].value; // Restore value for hiding logic
-                    hideCell(starCard); // Hide it again
-                    resetBoard();
-                    nextTurn();
-                } else {
-                    resetBoard();
-                    endRound();
-                }
-            }, 1500); // Keep revealed for 1.5 seconds
-
-            // Check if round is over after handling the star card
-            const currentRound = isTieBreakerRound ?
-                { totalEmojiPairs: tieBreakerTotalEmojiPairs, specialSquaresCount: tieBreakerSpecialSquaresCount } :
-                allGameRounds[currentGroupIndex][roundIndex];
-            const expectedMatches = currentRound.totalEmojiPairs;
-            const totalCellsToMatch = (expectedMatches * 2) + currentRound.specialSquaresCount;
-            const matchedCells = document.querySelectorAll('.cell.matched').length;
-
-            if (matchedCells >= totalCellsToMatch) {
-                // If it's the last card, ensure endRound is called without delay
-                if (!isTransitioning) { // Prevent multiple calls
-                    setTimeout(endRound, 1500); // Delay endRound to let star animation finish
-                }
-            }
-        }
-
-
-        function isRoundOver() {
-            const currentRoundData = isTieBreakerRound ?
-                { totalEmojiPairs: tieBreakerTotalEmojiPairs, specialSquaresCount: tieBreakerSpecialSquaresCount } :
-                allGameRounds[currentGroupIndex][roundIndex];
-
-            const totalContentCells = (currentRoundData.totalEmojiPairs * 2) + currentRoundData.specialSquaresCount;
-            const matchedCellsOnBoard = document.querySelectorAll('.cell.matched:not(.empty)').length;
-            return matchedCellsOnBoard >= totalContentCells;
+                card1.textContent = card1.dataset.index + 1;
+                card2.textContent = card2.dataset.index + 1;
+                card1.classList.add('hidden');
+                card2.classList.add('hidden');
+                resetBoard();
+            }, 1000);
         }
 
         function resetBoard() {
-            firstPick = null;
-            lockBoard = false;
+            [firstPick, lockBoard] = [null, false];
         }
 
-        function updateScoreboard() {
-            activeTeams.forEach(team => {
-                document.getElementById(`score${team.charAt(0).toUpperCase() + team.slice(1)}`).textContent = scores[team];
+        function disableClicking() {
+            board.forEach(cell => {
+                cell.onclick = null; // Remove click event listener
             });
+        }
+
+        function enableClicking() {
+            board.forEach(cell => {
+                if (!cell.classList.contains('matched') && !cell.classList.contains('value-revealed')) {
+                    cell.onclick = () => pickCard(cell);
+                } else {
+                    cell.onclick = null; // Ensure matched/revealed cells cannot be clicked
+                }
+            });
+        }
+
+        function pickCard(card) {
+            if (lockBoard || card.classList.contains('matched') || card.classList.contains('value-revealed') || card === firstPick) {
+                return;
+            }
+
+            card.textContent = card.dataset.value;
+            card.classList.remove('hidden');
+
+            // Handle special star square
+            if (card.dataset.specialType === 'star-placeholder') {
+                handleStarSquare(card);
+                return; // Exit as star squares don't require matching
+            }
+
+            if (!firstPick) {
+                firstPick = card;
+                return;
+            }
+
+            // Second pick
+            lockBoard = true;
+            checkMatch(card);
+        }
+
+        function checkMatch(secondPick) {
+            const currentRound = isTieBreakerRound ?
+                { type: "emoji", totalEmojiPairs: tieBreakerTotalEmojiPairs } :
+                allGameRounds[currentGroupIndex][roundIndex];
+
+            let isMatch = false;
+
+            if (currentRound.type === "emoji" || isTieBreakerRound) {
+                isMatch = firstPick.dataset.value === secondPick.dataset.value;
+            } else if (currentRound.type === "words" || currentRound.type === "math") {
+                // For words/math, need to check both directions of the pair
+                const pairs = (currentRound.type === "words") ? group2Rounds[roundIndex].textPairs : group3Rounds[roundIndex - 8].mathPairs;
+                isMatch = pairs.some(pair =>
+                    (firstPick.dataset.value === pair[0] && secondPick.dataset.value === pair[1]) ||
+                    (firstPick.dataset.value === pair[1] && secondPick.dataset.value === pair[0])
+                );
+            } else if (currentRound.type === "letter-word") {
+                const pairs = group2Rounds[roundIndex].letterWordPairs;
+                isMatch = pairs.some(pair =>
+                    (firstPick.dataset.value === pair[0] && secondPick.dataset.value === pair[1]) ||
+                    (firstPick.dataset.value === pair[1] && secondPick.dataset.value === pair[0])
+                );
+            } else if (currentRound.type === "incomplete-word") {
+                const pairs = group2Rounds[roundIndex].incompleteWordPairs;
+                isMatch = pairs.some(pair =>
+                    (firstPick.dataset.value === pair[0] && secondPick.dataset.value === pair[1]) ||
+                    (firstPick.dataset.value === pair[1] && secondPick.dataset.value === pair[0])
+                );
+            }
+
+            if (isMatch) {
+                matchedPairsCount++;
+                activeTeams.forEach(team => updateScoreboard(team)); // تحديث لوحة النتائج للفريق الحالي فقط بعد المطابقة
+                updateScore(activeTeams[currentTeamIndex], 1); // فقط الفريق الذي عليه الدور يحصل على النقاط
+                [firstPick, secondPick].forEach(card => card.classList.add('matched'));
+                resetBoard();
+                checkRoundEnd();
+            } else {
+                hideSpecificCards(firstPick, secondPick);
+                endTurn(); // Change turn only on incorrect match
+            }
+        }
+
+
+        function handleStarSquare(card) {
+            lockBoard = true; // Lock board temporarily while star value is revealed
+            card.classList.add('value-revealed');
+            const starValue = parseInt(card.dataset.originalStarValue);
+
+            card.textContent = starValue > 0 ? `+${starValue}` : starValue; // Show + or -
+
+            if (starValue > 0) {
+                card.classList.add('positive');
+            } else {
+                card.classList.add('negative');
+            }
+
+            updateScore(activeTeams[currentTeamIndex], starValue);
+            updateScoreboard(activeTeams[currentTeamIndex]);
+
+            setTimeout(() => {
+                card.classList.remove('value-revealed', 'positive', 'negative');
+                card.classList.add('hidden');
+                card.textContent = card.dataset.index + 1; // Revert to number and hide
+                resetBoard();
+                endTurn(); // End turn after star square interaction
+            }, 1500);
+        }
+
+
+        function updateScore(team, points) {
+            scores[team] += points;
+            document.getElementById(`score${team.charAt(0).toUpperCase() + team.slice(1)}`).textContent = scores[team];
         }
 
         function updateActiveTeamDisplay() {
             activeTeams.forEach((team, index) => {
-                const teamElem = scoreBoardElements[team];
-                if (teamElem) {
+                const teamDiv = scoreBoardElements[team];
+                if (teamDiv) {
                     if (index === currentTeamIndex) {
-                        teamElem.classList.add('active');
+                        teamDiv.classList.add('active');
                         resultDisplay.textContent = `دور فريق: ${teamNames[team]}`;
                     } else {
-                        teamElem.classList.remove('active');
+                        teamDiv.classList.remove('active');
                     }
                 }
             });
         }
 
-        function nextTurn() {
-            if (isRoundOver()) {
-                endRound();
-                return;
-            }
+        function endTurn() {
             currentTeamIndex = (currentTeamIndex + 1) % activeTeams.length;
             updateActiveTeamDisplay();
         }
 
-        function startTimer(duration, onEnd) {
-            clearInterval(timerInterval);
-            let timer = duration;
-            timerContainer.textContent = `الوقت المتبقي: ${timer} ثواني`;
-            timerInterval = setInterval(() => {
-                timer--;
-                timerContainer.textContent = `الوقت المتبقي: ${timer} ثواني`;
-                if (timer <= 0) {
-                    clearInterval(timerInterval);
-                    timerContainer.textContent = "انتهى الوقت!";
-                    onEnd();
+        function checkRoundEnd() {
+            const currentRound = isTieBreakerRound ?
+                { totalEmojiPairs: tieBreakerTotalEmojiPairs } :
+                allGameRounds[currentGroupIndex][roundIndex];
+
+            if (matchedPairsCount >= currentRound.totalEmojiPairs) {
+                // All regular pairs matched, round is over
+                setTimeout(goToNextRoundOrGroup, 1500); // Small delay before moving to next round
+            } else {
+                enableClicking(); // Continue allowing clicks if not all pairs matched
+            }
+        }
+
+        function goToNextRoundOrGroup() {
+            disableClicking(); // Disable clicks during transition
+            isTransitioning = true;
+            clearInterval(timerInterval); // Stop any active timers
+            timerContainer.textContent = "";
+
+            hideAllModals(); // Hide any open modals
+
+            if (isTieBreakerRound) {
+                determineWinner();
+                return;
+            }
+
+            roundIndex++;
+            let currentGroupRounds = allGameRounds[currentGroupIndex];
+
+            if (roundIndex < currentGroupRounds.length) {
+                // Go to next round in the current group
+                startInterRoundCountdown(`الجولة التالية: ${roundCategories[currentGroupIndex * 4 + roundIndex]}`);
+            } else {
+                // All rounds in current group finished
+                currentGroupIndex++;
+                roundIndex = 0; // Reset round index for the new group
+
+                if (currentGroupIndex < allGameRounds.length) {
+                    // Go to next group
+                    resultDisplay.textContent = "";
+                    startGameBtn.style.display = 'none'; // Hide start game button
+                    nextGroupBtn.style.display = 'inline-block'; // Show next group button
+                    nextGroupBtn.textContent = `المجموعة التالية: ${roundCategories[currentGroupIndex * 4]}`; // Show category of next group
+                    enableControls(); // Enable the next group button
+                } else {
+                    // All groups finished, determine winner
+                    determineWinner();
+                }
+            }
+        }
+
+
+        function startInterRoundCountdown(message) {
+            countdownOverlay.classList.add('show');
+            countdownText.textContent = message;
+            let count = interRoundDelay;
+            countdownNumber.textContent = count;
+
+            const countdownInter = setInterval(() => {
+                count--;
+                countdownNumber.textContent = count;
+                if (count <= 0) {
+                    clearInterval(countdownInter);
+                    countdownOverlay.classList.remove('show');
+                    if (!isTieBreakerRound) { // Only start new round if not tie-breaker
+                         startRound();
+                    }
+                    isTransitioning = false;
                 }
             }, 1000);
         }
+
 
         function handleStartOrNextRound() {
-            if (isTransitioning) return;
+            if (isTransitioning) return; // Prevent multiple clicks during transition
             isTransitioning = true;
-            disableControls();
 
-            let roundData;
+            nextGroupBtn.style.display = 'none'; // Hide next group button if visible
+            startGameBtn.textContent = "بدء الجولة"; // Ensure it says "بدء الجولة"
+
             if (isTieBreakerRound) {
-                roundData = {
-                    emojis: tieBreakerEmojis,
-                    gridSizeClass: "size-15", // Tie-breaker always uses 3x5 grid
-                    timer: tieBreakerTimer,
-                    category: "جولة التعادل",
-                    specialSquaresCount: tieBreakerSpecialSquaresCount,
-                    totalEmojiPairs: tieBreakerTotalEmojiPairs,
-                    type: "emoji" // Treat tie-breaker as emoji type for content generation
-                };
+                startTieBreakerRound();
             } else {
-                roundData = allGameRounds[currentGroupIndex][roundIndex];
-            }
-
-            resultDisplay.textContent = `فئة الجولة: ${roundData.category}`;
-            updateActiveTeamDisplay();
-
-            createBoard(roundData); // Create and display board with values
-
-            countdownText.textContent = "الاستعداد للجولة...";
-            countdownNumber.textContent = "3";
-            countdownOverlay.classList.add('show');
-
-            let countdown = 3;
-            const preRoundCountdownInterval = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    countdownNumber.textContent = countdown;
-                } else if (countdown === 0) {
-                    countdownNumber.textContent = "انطلق!";
-                } else {
-                    clearInterval(preRoundCountdownInterval);
-                    countdownOverlay.classList.remove('show');
-                    startGame();
-                }
-            }, 1000);
-
-            function startGame() {
-                startTimer(roundData.timer, () => {
-                    hideAllCards(); // Hide cards after timer
-                    enableClicking(); // Allow clicking only after cards are hidden
-                    startGameBtn.textContent = "إعادة الجولة";
-                    enableControls();
-                    isTransitioning = false;
-                });
+                startRound();
             }
         }
 
-        function endRound() {
-            if (isTransitioning) return;
-            isTransitioning = true;
-            clearInterval(timerInterval);
-            disableClicking();
-            disableControls();
 
-            const currentRoundData = isTieBreakerRound ?
-                { category: "جولة التعادل" } :
-                allGameRounds[currentGroupIndex][roundIndex];
-            resultDisplay.textContent = `انتهت جولة ${currentRoundData.category}!`;
-
-            // Display all cards briefly for review
-            const cells = document.querySelectorAll('.cell:not(.empty)');
-            cells.forEach(cell => {
-                revealCell(cell);
-            });
-
-            setTimeout(() => {
-                hideAllCards(); // Hide them again after review
-                if (isTieBreakerRound) {
-                    showFinalWinner();
-                    return;
-                }
-
-                roundIndex++;
-                if (roundIndex < allGameRounds[currentGroupIndex].length) {
-                    // Next round in current group
-                    handleNextRoundInGroup();
-                } else {
-                    // End of current group
-                    endGroup();
-                }
-            }, 3000); // Display cards for 3 seconds after round end
-        }
-
-        function handleNextRoundInGroup() {
-            const nextRoundData = allGameRounds[currentGroupIndex][roundIndex];
-            createBoard(nextRoundData);
-            hideAllCards();
-            disableClicking();
+        function startRound() {
+            const roundData = allGameRounds[currentGroupIndex][roundIndex];
+            createBoard(roundData);
             matchedPairsCount = 0; // Reset matched pairs for the new round
             firstPick = null;
             lockBoard = false;
-
-            // Rotate starting team for the new round within the same group
-            startingTeamIndexForRound = (startingTeamIndexForRound + 1) % activeTeams.length;
-            currentTeamIndex = startingTeamIndexForRound;
+            currentTeamIndex = startingTeamIndexForRound; // Start with the same team as the beginning of the round
             updateActiveTeamDisplay();
 
-            countdownText.textContent = "الجولة القادمة تبدأ في...";
-            countdownNumber.textContent = interRoundDelay;
-            countdownOverlay.classList.add('show');
+            revealAllCards(); // Show all cards for the timer duration
+            disableClicking(); // Disable clicking during reveal phase
 
-            let countdown = interRoundDelay;
-            const interRoundInterval = setInterval(() => {
-                countdown--;
-                countdownNumber.textContent = countdown;
-                if (countdown <= 0) {
-                    clearInterval(interRoundInterval);
-                    countdownOverlay.classList.remove('show');
-                    startGameBtn.textContent = "بدء الجولة";
-                    enableControls();
+            let timeLeft = roundData.timer;
+            timerContainer.textContent = `الوقت المتبقي: ${timeLeft} ثواني`;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerContainer.textContent = `الوقت المتبقي: ${timeLeft} ثواني`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    hideAllCards(); // Hide cards after timer ends
+                    enableClicking(); // Enable clicking after cards are hidden
+                    timerContainer.textContent = ""; // Clear timer display
                     isTransitioning = false;
                 }
             }, 1000);
-        }
-
-
-        function endGroup() {
-            currentGroupIndex++;
-            roundIndex = 0; // Reset round index for the new group
-            matchedPairsCount = 0; // Reset matched pairs for the new group
-
-            if (currentGroupIndex < allGameRounds.length) {
-                // More groups left
-                resultDisplay.textContent = `انتهت المجموعة الحالية! اضغط "المجموعة التالية" للانتقال.`;
-                startGameBtn.style.display = 'none'; // Hide Start Game button
-                nextGroupBtn.style.display = 'inline-block'; // Show Next Group button
-                enableControls();
-                isTransitioning = false;
-            } else {
-                // All groups completed
-                resultDisplay.textContent = `انتهت جميع الجولات!`;
-                showFinalWinner();
-            }
         }
 
         function nextGroupManually() {
-            if (isTransitioning) return; // Prevent double clicks
+            if (isTransitioning) return;
             isTransitioning = true;
-            disableControls();
-            nextGroupBtn.style.display = 'none'; // Hide "المجموعة التالية" button
 
-            const nextRoundData = allGameRounds[currentGroupIndex][roundIndex];
-            createBoard(nextRoundData);
-            hideAllCards();
-            disableClicking();
-            matchedPairsCount = 0;
-            firstPick = null;
-            lockBoard = false;
+            // Hide the "Next Group" button
+            nextGroupBtn.style.display = 'none';
+            // Show the "Start Game" button and change its text
+            startGameBtn.style.display = 'inline-block';
+            startGameBtn.textContent = "بدء الجولة"; // Change button text for the new group's first round
 
-            startingTeamIndexForRound = (startingTeamIndexForRound + 1) % activeTeams.length;
-            currentTeamIndex = startingTeamIndexForRound;
-            updateActiveTeamDisplay();
-
-            countdownText.textContent = "المجموعة القادمة تبدأ في...";
-            countdownNumber.textContent = interRoundDelay;
-            countdownOverlay.classList.add('show');
-
-            let countdown = interRoundDelay;
-            const interGroupInterval = setInterval(() => {
-                countdown--;
-                countdownNumber.textContent = countdown;
-                if (countdown <= 0) {
-                    clearInterval(interGroupInterval);
-                    countdownOverlay.classList.remove('show');
-                    startGameBtn.textContent = "بدء الجولة";
-                    startGameBtn.style.display = 'inline-block'; // Show start game button
-                    enableControls();
-                    isTransitioning = false;
-                }
-            }, 1000);
+            // Start countdown for the first round of the new group
+            startInterRoundCountdown(`المجموعة التالية: ${roundCategories[currentGroupIndex * 4]}`);
         }
 
-
-        function showFinalWinner() {
-            hideAllModals(); // Hide any other open modals
-            gameArea.style.display = 'none'; // Hide game area
-            clearInterval(timerInterval); // Stop any running timer
+        function determineWinner() {
+            hideAllModals(); // Hide any active modals
+            clearInterval(timerInterval); // Stop any timers
+            gameInitialized = false; // Mark game as not initialized
 
             let maxScore = -Infinity;
-            let winners = [];
-            let isTie = false;
-
             activeTeams.forEach(team => {
                 if (scores[team] > maxScore) {
                     maxScore = scores[team];
-                    winners = [team];
-                    isTie = false;
-                } else if (scores[team] === maxScore && maxScore !== -Infinity) {
-                    winners.push(team);
-                    isTie = true;
                 }
             });
 
-            if (winners.length === 1) {
-                const winnerTeamColor = winners[0];
-                finalWinnerText.textContent = `الفريق الفائز هو: ${teamNames[winnerTeamColor]}!`;
-                finalWinnerText.style.color = teamCssColors[winnerTeamColor]; // Set text color to winning team's color
-                finalTieText.textContent = '';
-                startTieBreakerBtn.style.display = 'none'; // Hide tie-breaker button
+            const winningTeams = activeTeams.filter(team => scores[team] === maxScore);
 
-                // Trigger confetti for the winner
-                triggerConfetti();
-
+            if (winningTeams.length === 1) {
+                const winnerColor = winningTeams[0];
+                const winnerName = teamNames[winnerColor];
+                finalWinnerText.textContent = `الفريق الفائز: ${winnerName}! 🎉`;
+                finalWinnerText.style.color = teamCssColors[winnerColor]; // Set winning text color
+                finalTieText.textContent = ""; // Clear tie text
+                startConfettiEffect();
+                startTieBreakerBtn.style.display = 'none'; // Ensure tie breaker button is hidden
             } else {
-                // It's a tie
-                finalWinnerText.textContent = 'تعادل بين الفرق!';
-                finalWinnerText.style.color = '#007bff'; // Blue for tie
-                const tiedTeamsNames = winners.map(team => teamNames[team]).join(' و ');
-                finalTieText.textContent = `الفرق المتعادلة: ${tiedTeamsNames}`;
-                startTieBreakerBtn.style.display = 'inline-block'; // Show tie-breaker button
+                finalWinnerText.textContent = `تعادل بين الفرق! 🤝`;
+                finalWinnerText.style.color = "#007bff"; // Blue for tie
+                finalTieText.textContent = "يمكنكم بدء جولة تعادل لكسر التعادل.";
+                startTieBreakerBtn.style.display = 'inline-block'; // Show tie breaker button
             }
 
             finalWinnerModal.classList.add('show');
+            disableControls(); // Disable game buttons
         }
 
-        function startTieBreaker() {
-            hideAllModals();
-            isTieBreakerRound = true;
-            // Filter activeTeams to only include tied teams for tie-breaker
-            let maxScore = -Infinity;
-            let tiedTeams = [];
-            activeTeams.forEach(team => {
-                if (scores[team] > maxScore) {
-                    maxScore = scores[team];
-                    tiedTeams = [team];
-                } else if (scores[team] === maxScore && maxScore !== -Infinity) {
-                    tiedTeams.push(team);
+        function getRandomStarValue(groupIndex) {
+            // القيم المحتملة تعتمد على المجموعة (كلما تقدمت المجموعات، زادت القيم)
+            let minVal = 1;
+            let maxVal = 2;
+            if (groupIndex === 1) { // المجموعة الثانية
+                minVal = 2;
+                maxVal = 3;
+            } else if (groupIndex === 2) { // المجموعة الثالثة
+                minVal = 3;
+                maxVal = 4;
+            }
+            // اختيار قيمة عشوائية بين minVal و maxVal
+            return Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal;
+        }
+
+        // Functions for Confetti Effect
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = `${Math.random() * 100}vw`;
+            confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            confetti.style.animationDelay = `${Math.random() * 2}s`;
+            document.body.appendChild(confetti);
+
+            confetti.addEventListener('animationend', () => {
+                confetti.remove();
+            });
+        }
+
+        let confettiInterval = null;
+
+        function startConfettiEffect() {
+            // Clear any existing confetti interval first
+            clearConfetti();
+            // Create a burst of confetti initially
+            for (let i = 0; i < 50; i++) {
+                createConfetti();
+            }
+            // Continue creating confetti at intervals
+            confettiInterval = setInterval(() => {
+                for (let i = 0; i < 10; i++) {
+                    createConfetti();
                 }
-            });
-            activeTeams = tiedTeams; // Only tied teams participate
-            currentTeamIndex = 0;
-            startingTeamIndexForRound = 0; // Reset starting team for tie-breaker
-            scores = {}; // Reset scores for tie-breaker
-            activeTeams.forEach(team => scores[team] = 0); // Initialize tied teams with 0 score
-
-            // Update scoreboard to show only tied teams
-            scoreboardDiv.innerHTML = '';
-            activeTeams.forEach(team => {
-                const teamDiv = document.createElement('div');
-                teamDiv.classList.add('team', team);
-                teamDiv.dataset.team = team;
-                teamDiv.innerHTML = `${teamNames[team]}: <span id="score${team.charAt(0).toUpperCase() + team.slice(1)}">0</span>`;
-                scoreboardDiv.appendChild(teamDiv);
-            });
-            scoreBoardElements = {}; // Re-populate scoreBoardElements for active teams
-            activeTeams.forEach(color => {
-                const elem = document.querySelector(`.team.${color}`);
-                if (elem) scoreBoardElements[color] = elem;
-            });
-
-            matchedPairsCount = 0; // Reset for tie-breaker
-            gameArea.style.display = 'flex'; // Show game area
-            handleStartOrNextRound(); // Start the tie-breaker round
+            }, 500);
         }
 
-        function resetGame() {
-            hideAllModals();
-            clearInterval(timerInterval);
-            currentGroupIndex = 0;
-            roundIndex = 0;
-            matchedPairsCount = 0;
-            isTieBreakerRound = false;
-            gameInitialized = false;
-            firstPick = null;
-            lockBoard = false;
-
-            // Clear scoreboard and hide game area
-            scoreboardDiv.innerHTML = '';
-            gameArea.style.display = 'none';
-
-            // Reset scores and team names (optional, based on desired behavior)
-            scores = {};
-            teamNames = {
-                "blue": "الفريق الأزرق",
-                "red": "الفريق الأحمر",
-                "green": "الفريق الأخضر",
-                "orange": "الفريق البرتقالي"
-            };
-
-            // Show initial advice modal to start fresh
-            showAdviceModal();
+        function clearConfetti() {
+            if (confettiInterval) {
+                clearInterval(confettiInterval);
+                confettiInterval = null;
+            }
+            document.querySelectorAll('.confetti').forEach(c => c.remove());
         }
 
+        // --- وظائف التحكم في الأزرار ---
+        function disableControls() {
+            startGameBtn.disabled = true;
+            nextGroupBtn.disabled = true;
+            resetGameBtn.disabled = true;
+        }
+
+        function enableControls() {
+            startGameBtn.disabled = false;
+            nextGroupBtn.disabled = false;
+            resetGameBtn.disabled = false;
+        }
+
+        // --- وظائف إعادة التعيين والتعادل ---
         function showResetConfirmation() {
             resetConfirmationModal.classList.add('show');
         }
 
-        confirmResetBtn.addEventListener('click', resetGame);
-        cancelResetBtn.addEventListener('click', () => {
-            resetConfirmationModal.classList.remove('show');
+        confirmResetBtn.addEventListener('click', () => {
+            hideAllModals(); // Hide confirmation modal
+            resetGame();
         });
 
+        cancelResetBtn.addEventListener('click', () => {
+            hideAllModals(); // Hide confirmation modal
+        });
+
+
+        function resetGame() {
+            hideAllModals();
+            clearConfetti();
+            clearInterval(timerInterval); // Stop any running timer
+
+            // Reset game state variables
+            currentGroupIndex = 0;
+            roundIndex = 0;
+            currentTeamIndex = 0;
+            startingTeamIndexForRound = 0;
+            isTieBreakerRound = false;
+            matchedPairsCount = 0;
+            firstPick = null;
+            lockBoard = false;
+            gameInitialized = false;
+            isTransitioning = false;
+
+            // Clear scoreboard
+            scoreboardDiv.innerHTML = '';
+            // Clear grid
+            grid.innerHTML = '';
+            grid.className = 'grid'; // Remove any size classes
+            timerContainer.textContent = "";
+            resultDisplay.textContent = "";
+
+            // Reset button states
+            startGameBtn.textContent = "بدء الجولة";
+            startGameBtn.style.display = 'inline-block';
+            nextGroupBtn.style.display = 'none';
+            resetGameBtn.style.display = 'inline-block';
+            enableControls();
+
+            // Hide game area until selection is made
+            gameArea.style.display = 'none';
+
+            // Show advice modal to start fresh
+            showAdviceModal();
+        }
+
         playAgainBtn.addEventListener('click', resetGame);
-        startTieBreakerBtn.addEventListener('click', startTieBreaker);
 
-        function enableControls() {
-            startGameBtn.disabled = false;
-            resetGameBtn.disabled = false;
-            nextGroupBtn.disabled = false;
-        }
-
-        function disableControls() {
-            startGameBtn.disabled = true;
-            resetGameBtn.disabled = true;
-            nextGroupBtn.disabled = true;
-        }
-
-        function triggerConfetti() {
-            const numConfetti = 50;
-            for (let i = 0; i < numConfetti; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.top = `${Math.random() * -50}px`; // Start above screen
-                confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-                confetti.style.animationDuration = `${Math.random() * 3 + 2}s`; // 2-5 seconds
-                confetti.style.animationDelay = `${Math.random() * 2}s`;
-                document.body.appendChild(confetti);
-                confetti.addEventListener('animationend', () => confetti.remove());
-            }
-        }
-
-        function clearConfetti() {
-            document.querySelectorAll('.confetti').forEach(c => c.remove());
-        }
+        startTieBreakerBtn.addEventListener('click', () => {
+            hideAllModals();
+            clearConfetti();
+            isTieBreakerRound = true;
+            currentGroupIndex = allGameRounds.length; // Ensure this is beyond normal rounds
+            roundIndex = 0; // Reset round index for tie-breaker
+            startingTeamIndexForRound = 0; // Reset starting team for tie-breaker
+            currentTeamIndex = 0;
+            matchedPairsCount = 0; // Reset matched pairs for tie-breaker
+            scores = {}; // Reset scores for a fresh tie-breaker
+            activeTeams.forEach(team => {
+                scores[team] = 0;
+                document.getElementById(`score${team.charAt(0).toUpperCase() + team.slice(1)}`).textContent = scores[team]; // Update displayed scores
+            });
+            startInterRoundCountdown("جولة كسر التعادل!");
+            startGameBtn.style.display = 'inline-block';
+            startGameBtn.textContent = "بدء جولة التعادل";
+            nextGroupBtn.style.display = 'none';
+            enableControls();
+            gameArea.style.display = 'flex'; // Show game area
+        });
 
 
-        // Initial setup
-        showAdviceModal();
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', showAdviceModal);
+
     </script>
 </body>
 </html>
