@@ -6,8 +6,9 @@
     <title>لعبة صيدها - الذاكرة العائلية</title>
     <style>
         :root {
-            --cell-min-size-15: 100px; /* For size-15 grid */
-            --cell-min-size-18: 80px;  /* For size-18 grid */
+            /* استخدم قيم ثابتة مستوحاة من ملفك ولكن قابلة للتعديل عند الحاجة */
+            --cell-size: 85px; /* حجم موحد للخلايا لتبدو مربعة */
+            --grid-gap-size: 8px; /* فجوة أصغر بين الخلايا */
         }
 
         body {
@@ -16,13 +17,13 @@
             color: #222;
             text-align: center;
             padding: clamp(10px, 3vw, 20px); /* Responsive padding */
+            margin: 0;
             direction: rtl;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
             overflow-x: hidden; /* Prevent horizontal scroll */
             position: relative;
         }
@@ -256,15 +257,17 @@
         /* التخطيط الافتراضي للشبكة */
         .grid {
             display: grid;
-            grid-gap: clamp(8px, 1.5vw, 15px); /* Slightly smaller gap to save space */
+            grid-gap: var(--grid-gap-size);
             justify-content: center;
             margin: clamp(10px, 3vw, 20px) auto;
             max-width: fit-content;
         }
 
-        /* أحجام الخلايا الافتراضية */
+        /* أحجام الخلايا الافتراضية - مستوحاة من ملفك */
         .cell {
-            border-radius: 15px;
+            width: var(--cell-size); /* حجم موحد للخلايا */
+            height: var(--cell-size); /* لضمان شكل مربع */
+            border-radius: 15px; /* لم نعد بحاجة للدائرية هنا إلا إذا أردت ذلك */
             background-color: #ffffff;
             display: flex;
             align-items: center;
@@ -278,40 +281,31 @@
             line-height: 1.2;
             padding: 5px;
             box-sizing: border-box;
-            aspect-ratio: 1 / 1; /* Ensure cells are perfectly square */
+            /* removed aspect-ratio as we now have fixed width/height */
         }
 
-        /* أحجام الشبكة حسب الجولة - تم التعديل للاستجابة */
+        /* أحجام الشبكة حسب الجولة - تم التعديل لتطبيق الحجم الثابت */
         .grid.size-15 {
-            grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-15), 1fr));
-            grid-template-rows: auto; /* Allow rows to size themselves */
-            width: 100%; /* Ensure grid takes full width */
-            max-width: calc(5 * var(--cell-min-size-15) + 4 * clamp(8px, 1.5vw, 15px)); /* Max width based on 5 cells + gaps */
+            /* 5 أعمدة * حجم الخلية + 4 * الفجوة */
+            grid-template-columns: repeat(5, var(--cell-size));
+            grid-template-rows: repeat(3, var(--cell-size)); /* 3 صفوف لـ 15 خلية */
+            width: fit-content; /* تتناسب مع محتوى الأعمدة */
         }
-        .grid.size-15 .cell {
-            width: clamp(var(--cell-min-size-15), 18vw, 140px); /* Responsive width */
-            /* height is handled by aspect-ratio */
-        }
+        /* لم نعد بحاجة لتحديد عرض الخلايا داخل هذا الكلاس لأنها تحددها var(--cell-size) */
 
         .grid.size-18 {
-            grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-18), 1fr));
-            grid-template-rows: auto; /* Allow rows to size themselves */
-            width: 100%; /* Ensure grid takes full width */
-            max-width: calc(6 * var(--cell-min-size-18) + 5 * clamp(8px, 1.5vw, 15px)); /* Max width based on 6 cells + gaps */
+            /* 6 أعمدة * حجم الخلية + 5 * الفجوة */
+            grid-template-columns: repeat(6, var(--cell-size));
+            grid-template-rows: repeat(3, var(--cell-size)); /* 3 صفوف لـ 18 خلية */
+            width: fit-content; /* تتناسب مع محتوى الأعمدة */
         }
-        .grid.size-18 .cell {
-            width: clamp(var(--cell-min-size-18), 12vw, 110px); /* Responsive width */
-            /* height is handled by aspect-ratio */
-        }
+        /* لم نعد بحاجة لتحديد عرض الخلايا داخل هذا الكلاس لأنها تحددها var(--cell-size) */
 
         /* نمط خاص للخلايا التي تحتوي على نصوص أو أرقام حسابية */
         .cell.text-content {
-            font-size: clamp(20px, 4vw, 35px); /* Responsive font size */
+            font-size: clamp(18px, 3.5vw, 30px); /* Responsive font size */
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            white-space: normal;
+            white-space: normal; /* السماح بتعدد الأسطر إذا لزم الأمر */
             word-break: break-word;
         }
 
@@ -320,12 +314,12 @@
         .cell[data-round-type="math"],
         .cell[data-round-type="letter-word"],
         .cell[data-round-type="incomplete-word"] {
-            font-size: clamp(18px, 3.5vw, 30px); /* Responsive font size */
+            font-size: clamp(16px, 3vw, 28px); /* أصغر قليلاً لاستيعاب النصوص */
         }
         /* تعديل خاص لحجم خط الإيموجي والنجمة */
         .cell[data-round-type="emoji"],
         .cell[data-special-type="star-placeholder"] {
-            font-size: clamp(30px, 7vw, 45px); /* Responsive font size */
+            font-size: clamp(28px, 6vw, 40px); /* Responsive font size */
         }
 
         /* مكان وتصميم رسالة "دور الفريق" */
@@ -369,52 +363,62 @@
 
         /* Small screen adjustments */
         @media (max-width: 768px) {
-            .grid {
-                grid-gap: clamp(6px, 1.2vw, 12px); /* Even smaller gap on smaller screens */
-            }
-            .grid.size-15 .cell {
-                width: clamp(var(--cell-min-size-15), 22vw, 140px); /* Adjust vw for smaller screens */
-            }
-            .grid.size-18 .cell {
-                width: clamp(var(--cell-min-size-18), 15vw, 110px); /* Adjust vw for smaller screens */
+            :root {
+                --cell-size: 75px; /* تصغير حجم الخلية للشاشات الأصغر */
+                --grid-gap-size: 6px;
             }
             .cell.text-content {
-                font-size: clamp(16px, 3.5vw, 35px);
+                font-size: clamp(14px, 3vw, 25px);
             }
             .cell[data-round-type="words"],
             .cell[data-round-type="math"],
             .cell[data-round-type="letter-word"],
             .cell[data-round-type="incomplete-word"] {
-                font-size: clamp(14px, 3vw, 30px);
+                font-size: clamp(12px, 2.5vw, 22px);
             }
             .cell[data-round-type="emoji"],
             .cell[data-special-type="star-placeholder"] {
-                font-size: clamp(25px, 6vw, 45px);
+                font-size: clamp(22px, 5vw, 35px);
+            }
+            .team {
+                min-width: unset;
+                flex-basis: 45%;
+            }
+            .scoreboard {
+                gap: clamp(5px, 2vw, 10px);
             }
         }
 
         @media (max-width: 480px) {
-            .grid {
-                grid-gap: clamp(4px, 1vw, 8px); /* Even smaller gap on very small screens */
+            :root {
+                --cell-size: 60px; /* تصغير حجم الخلية أكثر للهواتف الصغيرة جداً */
+                --grid-gap-size: 5px;
             }
-            /* Adjust max-width to allow more columns if possible, but still limit on very small phones */
             .grid.size-15 {
-                grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-15), 1fr));
-                max-width: calc(3 * var(--cell-min-size-15) + 2 * clamp(4px, 1vw, 8px)); /* Limit to 3 columns on tiny screens */
+                /* يمكن أن تكون 3 أعمدة على شاشات صغيرة جداً */
+                grid-template-columns: repeat(3, var(--cell-size));
+                grid-template-rows: repeat(5, var(--cell-size)); /* 5 صفوف لـ 15 خلية */
             }
             .grid.size-18 {
-                grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-18), 1fr));
-                max-width: calc(4 * var(--cell-min-size-18) + 3 * clamp(4px, 1vw, 8px)); /* Limit to 4 columns on tiny screens */
+                /* يمكن أن تكون 4 أعمدة على شاشات صغيرة جداً */
+                grid-template-columns: repeat(4, var(--cell-size));
+                grid-template-rows: repeat(5, var(--cell-size)); /* 5 صفوف لـ 18 خلية - سيبقى هناك خلايا فارغة في الصف الأخير */
             }
             .cell.value-revealed {
                 font-size: clamp(2em, 8vw, 4em); /* Adjust for smaller screens */
             }
-            .team {
-                min-width: unset; /* Remove min-width on very small screens */
-                flex-basis: 45%; /* Allow teams to take more width */
+            .cell.text-content {
+                font-size: clamp(12px, 2.8vw, 20px);
             }
-            .scoreboard {
-                gap: clamp(5px, 2vw, 10px);
+            .cell[data-round-type="words"],
+            .cell[data-round-type="math"],
+            .cell[data-round-type="letter-word"],
+            .cell[data-round-type="incomplete-word"] {
+                font-size: clamp(10px, 2vw, 18px);
+            }
+            .cell[data-round-type="emoji"],
+            .cell[data-special-type="star-placeholder"] {
+                font-size: clamp(18px, 4vw, 30px);
             }
         }
         
@@ -854,9 +858,16 @@
                 });
             }
 
-            // Fill the board with placeholders for now to determine total cells
-            let totalCells = (roundData.type === "emoji" || isTieBreakerRound) ? (roundData.totalEmojiPairs * 2) : (roundData.totalEmojiPairs * 2);
-            totalCells += specialSquares.length;
+            // Determine total cells based on the round type
+            let totalCells;
+            if (roundData.gridSizeClass === "size-15") {
+                totalCells = 15; // 5 columns x 3 rows
+            } else if (roundData.gridSizeClass === "size-18") {
+                totalCells = 18; // 6 columns x 3 rows
+            } else {
+                totalCells = contents.length + specialSquares.length; // Fallback
+            }
+
 
             let cellsContent = [];
             for(let i=0; i<contents.length; i++) {
@@ -866,6 +877,11 @@
             specialSquares.forEach(star => {
                 cellsContent.push({ value: '⭐', type: 'special', specialType: 'star-placeholder', originalStarValue: star.value });
             });
+
+            // If there are more cells defined in totalCells than content available, fill with empty placeholders
+            while (cellsContent.length < totalCells) {
+                cellsContent.push({ value: '', type: 'empty' }); // Use empty string for placeholder
+            }
 
             shuffle(cellsContent); // Shuffle all content (regular and special)
 
@@ -948,6 +964,11 @@
                 return;
             }
 
+            // Prevent picking empty cells
+            if (card.dataset.type === 'empty') {
+                return;
+            }
+
             card.textContent = card.dataset.value;
             card.classList.remove('hidden');
 
@@ -978,19 +999,22 @@
                 isMatch = firstPick.dataset.value === secondPick.dataset.value;
             } else if (currentRound.type === "words" || currentRound.type === "math") {
                 // For words/math, need to check both directions of the pair
-                const pairs = (currentRound.type === "words") ? group2Rounds[roundIndex].textPairs : group3Rounds[roundIndex - 8].mathPairs;
+                const roundData = allGameRounds[currentGroupIndex][roundIndex];
+                const pairs = (roundData.type === "words") ? roundData.textPairs : roundData.mathPairs;
                 isMatch = pairs.some(pair =>
                     (firstPick.dataset.value === pair[0] && secondPick.dataset.value === pair[1]) ||
                     (firstPick.dataset.value === pair[1] && secondPick.dataset.value === pair[0])
                 );
             } else if (currentRound.type === "letter-word") {
-                const pairs = group2Rounds[roundIndex].letterWordPairs;
+                const roundData = allGameRounds[currentGroupIndex][roundIndex];
+                const pairs = roundData.letterWordPairs;
                 isMatch = pairs.some(pair =>
                     (firstPick.dataset.value === pair[0] && secondPick.dataset.value === pair[1]) ||
                     (firstPick.dataset.value === pair[1] && secondPick.dataset.value === pair[0])
                 );
             } else if (currentRound.type === "incomplete-word") {
-                const pairs = group2Rounds[roundIndex].incompleteWordPairs;
+                const roundData = allGameRounds[currentGroupIndex][roundIndex];
+                const pairs = roundData.incompleteWordPairs;
                 isMatch = pairs.some(pair =>
                     (firstPick.dataset.value === pair[0] && secondPick.dataset.value === pair[1]) ||
                     (firstPick.dataset.value === pair[1] && secondPick.dataset.value === pair[0])
@@ -1150,7 +1174,10 @@
 
 
         function startRound() {
-            const roundData = allGameRounds[currentGroupIndex][roundIndex];
+            const roundData = isTieBreakerRound ?
+                { emojis: tieBreakerEmojis, gridSizeClass: "size-15", timer: tieBreakerTimer, specialSquaresCount: tieBreakerSpecialSquaresCount, totalEmojiPairs: tieBreakerTotalEmojiPairs, type: "emoji" } :
+                allGameRounds[currentGroupIndex][roundIndex];
+
             createBoard(roundData);
             matchedPairsCount = 0; // Reset matched pairs for the new round
             firstPick = null;
@@ -1176,6 +1203,7 @@
                 }
             }, 1000);
         }
+
 
         function nextGroupManually() {
             if (isTransitioning) return;
