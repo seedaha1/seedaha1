@@ -256,7 +256,7 @@
         /* التخطيط الافتراضي للشبكة */
         .grid {
             display: grid;
-            grid-gap: clamp(10px, 2vw, 20px); /* Responsive gap */
+            grid-gap: clamp(8px, 1.5vw, 15px); /* Slightly smaller gap to save space */
             justify-content: center;
             margin: clamp(10px, 3vw, 20px) auto;
             max-width: fit-content;
@@ -278,6 +278,7 @@
             line-height: 1.2;
             padding: 5px;
             box-sizing: border-box;
+            aspect-ratio: 1 / 1; /* Ensure cells are perfectly square */
         }
 
         /* أحجام الشبكة حسب الجولة - تم التعديل للاستجابة */
@@ -285,22 +286,22 @@
             grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-15), 1fr));
             grid-template-rows: auto; /* Allow rows to size themselves */
             width: 100%; /* Ensure grid takes full width */
-            max-width: calc(5 * var(--cell-min-size-15) + 4 * clamp(10px, 2vw, 20px)); /* Max width based on 5 cells */
+            max-width: calc(5 * var(--cell-min-size-15) + 4 * clamp(8px, 1.5vw, 15px)); /* Max width based on 5 cells + gaps */
         }
         .grid.size-15 .cell {
-            width: clamp(var(--cell-min-size-15), 20vw, 140px); /* Responsive width */
-            height: clamp(var(--cell-min-size-15), 20vw, 140px); /* Responsive height */
+            width: clamp(var(--cell-min-size-15), 18vw, 140px); /* Responsive width */
+            /* height is handled by aspect-ratio */
         }
 
         .grid.size-18 {
             grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-18), 1fr));
             grid-template-rows: auto; /* Allow rows to size themselves */
             width: 100%; /* Ensure grid takes full width */
-            max-width: calc(6 * var(--cell-min-size-18) + 5 * clamp(10px, 2vw, 20px)); /* Max width based on 6 cells */
+            max-width: calc(6 * var(--cell-min-size-18) + 5 * clamp(8px, 1.5vw, 15px)); /* Max width based on 6 cells + gaps */
         }
         .grid.size-18 .cell {
-            width: clamp(var(--cell-min-size-18), 15vw, 110px); /* Responsive width */
-            height: clamp(var(--cell-min-size-18), 15vw, 110px); /* Responsive height */
+            width: clamp(var(--cell-min-size-18), 12vw, 110px); /* Responsive width */
+            /* height is handled by aspect-ratio */
         }
 
         /* نمط خاص للخلايا التي تحتوي على نصوص أو أرقام حسابية */
@@ -369,15 +370,13 @@
         /* Small screen adjustments */
         @media (max-width: 768px) {
             .grid {
-                grid-gap: clamp(8px, 1.5vw, 15px); /* Slightly smaller gap on smaller screens */
+                grid-gap: clamp(6px, 1.2vw, 12px); /* Even smaller gap on smaller screens */
             }
             .grid.size-15 .cell {
-                width: clamp(var(--cell-min-size-15), 25vw, 140px);
-                height: clamp(var(--cell-min-size-15), 25vw, 140px);
+                width: clamp(var(--cell-min-size-15), 22vw, 140px); /* Adjust vw for smaller screens */
             }
             .grid.size-18 .cell {
-                width: clamp(var(--cell-min-size-18), 20vw, 110px);
-                height: clamp(var(--cell-min-size-18), 20vw, 110px);
+                width: clamp(var(--cell-min-size-18), 15vw, 110px); /* Adjust vw for smaller screens */
             }
             .cell.text-content {
                 font-size: clamp(16px, 3.5vw, 35px);
@@ -396,13 +395,16 @@
 
         @media (max-width: 480px) {
             .grid {
-                grid-gap: clamp(5px, 1vw, 10px); /* Even smaller gap on very small screens */
+                grid-gap: clamp(4px, 1vw, 8px); /* Even smaller gap on very small screens */
             }
+            /* Adjust max-width to allow more columns if possible, but still limit on very small phones */
             .grid.size-15 {
-                max-width: calc(3 * var(--cell-min-size-15) + 2 * clamp(5px, 1vw, 10px)); /* Limit to 3 columns on tiny screens */
+                grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-15), 1fr));
+                max-width: calc(3 * var(--cell-min-size-15) + 2 * clamp(4px, 1vw, 8px)); /* Limit to 3 columns on tiny screens */
             }
             .grid.size-18 {
-                max-width: calc(4 * var(--cell-min-size-18) + 3 * clamp(5px, 1vw, 10px)); /* Limit to 4 columns on tiny screens */
+                grid-template-columns: repeat(auto-fit, minmax(var(--cell-min-size-18), 1fr));
+                max-width: calc(4 * var(--cell-min-size-18) + 3 * clamp(4px, 1vw, 8px)); /* Limit to 4 columns on tiny screens */
             }
             .cell.value-revealed {
                 font-size: clamp(2em, 8vw, 4em); /* Adjust for smaller screens */
