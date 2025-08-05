@@ -345,11 +345,13 @@
             pointer-events: none;
         }
 
-        /* التعديل هنا لحل مشكلة iOS */
+        /* هذا هو التعديل الصحيح لحل مشكلة iOS */
         .cell.hidden {
             background-color: #0055AA;
-            font-size: 0; /* التعديل لحل مشكلة iOS */
             cursor: pointer;
+        }
+        .cell.hidden span {
+            visibility: hidden; /* إخفاء المحتوى تمامًا داخل الخلية المخفية */
         }
 
         .cell.matched {
@@ -432,10 +434,10 @@
         }
 
         @keyframes fall {
-            0% { transform: translateY(-50px) translateX(0) scale(0.8); opacity: 0; }
+            0% { transform: translateY(-50px) rotateZ(0deg); opacity: 1; }
             10% { opacity: 0.7; }
             90% { opacity: 0; }
-            100% { transform: translateY(100vh) translateX(0) scale(1.2); opacity: 0; }
+            100% { transform: translateY(100vh) rotateZ(720deg); opacity: 0; }
         }
 
         /* شاشة العد التنازلي الفخمة */
@@ -1194,7 +1196,7 @@
                 cell.classList.add('cell', 'hidden', 'text-content'); // Always add text-content for formatting
                 if (cellData.type === 'empty') {
                     cell.classList.add('empty');
-                    cell.textContent = '';
+                    cell.innerHTML = '';
                 } else {
                     cell.dataset.content = cellData.content;
                     cell.dataset.isSpecial = cellData.isSpecial;
@@ -1271,7 +1273,7 @@
         function handleSpecialCard(cell, cellData) {
             scores[activeTeams[currentTeamIndex]] += cellData.value;
             cell.classList.add('value-revealed', cellData.value > 0 ? 'positive' : 'negative');
-            cell.textContent = cellData.value > 0 ? `+${cellData.value}` : `${cellData.value}`;
+            cell.innerHTML = `<span>${cellData.value > 0 ? '+' : ''}${cellData.value}</span>`;
             cell.removeEventListener('click', flipCard);
             updateScoreboard();
             
@@ -1279,8 +1281,6 @@
             setTimeout(() => {
                 cell.classList.remove('value-revealed', 'positive', 'negative');
                 cell.classList.add('hidden');
-                cell.textContent = '';
-                cell.dataset.specialType = 'star-placeholder';
                 cell.innerHTML = `<span>⭐</span>`;
                 lockBoard = false;
             }, 1500); // 1.5 seconds to show the value
@@ -1451,14 +1451,13 @@
             if (cell.dataset.isSpecial === 'true') {
                 scores[activeTeams[currentTeamIndex]] += parseInt(cell.dataset.value);
                 cell.classList.add('value-revealed', 'positive');
-                cell.textContent = `+${cell.dataset.value}`;
+                cell.innerHTML = `<span>+${cell.dataset.value}</span>`;
                 cell.removeEventListener('click', () => flipTieBreakerCard(cell));
                 updateScoreboard();
                 
                 setTimeout(() => {
                     cell.classList.remove('value-revealed', 'positive');
                     cell.classList.add('hidden');
-                    cell.textContent = '';
                     cell.innerHTML = `<span>⭐</span>`;
                 }, 1500);
             } else {
