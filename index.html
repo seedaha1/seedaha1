@@ -1181,11 +1181,15 @@
             cell.style.backgroundColor = ''; // إعادة تعيين لون الخلفية إلى اللون الافتراضي للمخفي
             cell.style.color = 'transparent'; // إخفاء لون المحتوى
             
+            // ************ تم التعديل هنا ************
+            // قم بإفراغ محتوى النص عند إخفاء الخلية
             if (cell.dataset.specialType === 'star-placeholder') {
                 cell.textContent = ''; // إخفاء النص لمربع النجمة
             } else {
-                cell.textContent = cell.dataset.content; // إعادة المحتوى الأصلي (الإيموجي/النص/العملية)
+                cell.textContent = ''; // إفراغ محتوى النص لجميع الخلايا العادية عند إخفائها
             }
+            // ************ نهاية التعديل ************
+
             cell.style.filter = 'none';
             cell.style.textShadow = 'none';
             cell.classList.remove('text-content');
@@ -1277,7 +1281,7 @@
                     div.textContent = '';
                 } else {
                     div.dataset.content = content;
-                    div.textContent = content;
+                    div.textContent = content; // يتم تعيين النص هنا مبدئيًا
                 }
                 
                 grid.appendChild(div);
