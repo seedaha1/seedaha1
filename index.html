@@ -347,7 +347,11 @@
 
         .cell.hidden {
             background-color: #0055AA; /* lighter blue for hidden cells */
-            color: transparent !important; /* يخفي محتوى النص */ /* **تم التعديل هنا** */
+            /* Removed: color: transparent !important; */
+            font-size: 0; /* Shrink text */
+            line-height: 0; /* Collapse line height */
+            overflow: hidden; /* Hide anything that overflows */
+            text-indent: -9999px; /* Push text off-screen */
             cursor: pointer;
         }
 
@@ -365,6 +369,7 @@
             font-size: 4em; /* ليتناسب مع حجم الخلية الجديدة */
             transform: none; /* إزالة تأثير التحويم */
             color: white !important; /* لضمان أن النص أبيض */
+            text-indent: 0; /* Reset text-indent */
         }
         .cell.value-revealed.negative {
             background-color: #dc3545; /* أحمر */
@@ -391,6 +396,7 @@
             justify-content: center;
             white-space: normal; /* السماح بالالتفاف */
             word-break: break-word; /* كسر الكلمات الطويلة */
+            text-indent: 0; /* Reset text-indent */
         }
 
         /* تعديلات محددة للخط لجولات الكلمات والمرادفات/الأضداد والعمليات الحسابية */
@@ -399,11 +405,13 @@
         .cell[data-round-type="letter-word"],
         .cell[data-round-type="incomplete-word"] {
             font-size: 30px; /* حجم خط أصغر لجولات الكلمات والمرادفات/الأضداد والعمليات الحسابية */
+            text-indent: 0; /* Reset text-indent */
         }
         /* تعديل خاص لحجم خط الإيموجي والنجمة */
         .cell[data-round-type="emoji"],
         .cell[data-special-type="star-placeholder"] { /* */
             font-size: 45px; /* تم التعديل: حجم خط 45px للإيموجي والنجمة (يناسب أرقام جولة التعادل) */
+            text-indent: 0; /* Reset text-indent */
         }
 
 
@@ -1179,21 +1187,19 @@
             cell.classList.add("hidden");
             cell.classList.remove("value-revealed", "negative", "positive"); // إزالة فئات -1 و +1
             cell.style.backgroundColor = ''; // إعادة تعيين لون الخلفية إلى اللون الافتراضي للمخفي
-            cell.style.color = 'transparent'; // إخفاء لون المحتوى
+            // cell.style.color = 'transparent'; // تم إزالة هذه السطر وتم التعامل معه عبر CSS
             
-            // ************ تم التعديل هنا ************
             // قم بإفراغ محتوى النص عند إخفاء الخلية
             if (cell.dataset.specialType === 'star-placeholder') {
                 cell.textContent = ''; // إخفاء النص لمربع النجمة
             } else {
                 cell.textContent = ''; // إفراغ محتوى النص لجميع الخلايا العادية عند إخفائها
             }
-            // ************ نهاية التعديل ************
-
+            
             cell.style.filter = 'none';
             cell.style.textShadow = 'none';
-            cell.classList.remove('text-content');
-            cell.removeAttribute('data-round-type'); // إزالة نوع الجولة
+            // cell.classList.remove('text-content'); // تم ترك هذا لأنه قد يؤثر على الأنماط عند الكشف
+            // cell.removeAttribute('data-round-type'); // تم ترك هذا لأنه قد يؤثر على الأنماط عند الكشف
             cell.style.fontSize = ''; // إعادة تعيين حجم الخط الافتراضي
         }
 
@@ -1324,7 +1330,7 @@
                 timerInterval = setInterval(() => {
                     currentTimerValue--;
                     timerContainer.textContent = `الوقت: ${currentTimerValue} ثانية`;
-                    if (currentTimerValue <= 0) { // تم التعديل: يتوقف عند 0
+                    if (currentTimerValue <= 0) { // يتوقف عند 0
                         clearInterval(timerInterval);
                         timerInterval = null;
                         console.log("showAllCardsTemporarily: Timer finished, hiding cards.");
@@ -1389,7 +1395,7 @@
                 const interval = setInterval(() => {
                     countdown--;
                     countdownNumber.textContent = countdown;
-                    if (countdown <= 0) { // تم التعديل: يتوقف عند 0
+                    if (countdown <= 0) { // يتوقف عند 0
                         clearInterval(interval);
                         countdownOverlay.classList.remove("show");
                         console.log("startRoundProcess: Inter-round countdown finished.");
