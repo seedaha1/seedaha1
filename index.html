@@ -64,14 +64,12 @@
             transform: translate(-50%, -50%);
         }
 
-        /* تعديل خاص لإخفاء محتوى الخلية */
         .cell.hidden {
             background-color: #0055AA;
-            font-size: 0; /* هذا هو التعديل الذي يحل المشكلة */
+            font-size: 0; /* التعديل لحل مشكلة iOS */
             cursor: pointer;
         }
-        /* النهاية تعديل خاص لإخفاء محتوى الخلية */
-
+        
         .cell.matched {
             background-color: #00AA55;
             cursor: default;
@@ -92,7 +90,7 @@
             font-size: 1.5em;
             font-weight: bold;
             color: green;
-            display: none; /* مخفي في البداية */
+            display: none;
         }
         
         .controls {
@@ -128,6 +126,69 @@
         #restart-button:hover {
             background-color: #770000;
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #333;
+        }
+
+        .modal-content ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .modal-content li {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .button-group button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            background-color: #00AA55;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        .button-group button:hover {
+            background-color: #007733;
+        }
     </style>
 </head>
 <body>
@@ -141,6 +202,49 @@
         <div id="result-message" class="message"></div>
         <div class="controls">
             <button id="restart-button" class="button">إعادة اللعب</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="adviceModal">
+        <div class="modal-content">
+            <h2>نصيحة علشان نلعب ونستانس… بس بدون ما ننسى الأهم</h2>
+            <ul>
+                <li>"اللعب ممتع، بس خلّه بعد الصلاة، عشان ما تضيع عليك فرض."</li>
+                <li>"اللعبة حلوة، بس القرآن أحلى، خذ لك وقت بين الجولات وارتّح مع كلام الله."</li>
+                <li>"إذا جاء وقت الصلاة، نوقف اللعب ونكسب رضا رب العالمين."</li>
+                <li>"نلعب ونضحك، لكن ما نخلي اللعب يلهينا عن طاعة الله."</li>
+                <li>"اللعبة جزء من يومنا، مو كل يومنا… لا تنسى أهدافك وطموحاتك."</li>
+                <li>"اللعبة ما تمنع إنك تذاكر، نظّم وقتك وخلّ اللعب مكافأة بعد الإنجاز."</li>
+                <li>"وقت المذاكرة غالي، لا تخليه يضيع على حساب جيم ممكن تلعبه بأي وقت."</li>
+            </ul>
+            <p>"إذا لعبت وأنت محافظ على صلاتك وأذكارك وقراءة القرآن وخلصت المذاكرة والأشغال اللي عليك… أنت كسبت الدنيا والآخرة بإذن الله"</p>
+            <div class="button-group">
+                <button onclick="showInstructionsModal()">التالي</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="instructionsModal">
+        <div class="modal-content">
+            <h2>📝 تعليمات لعبة صيدها 🎮</h2>
+            <ul>
+                <li>🌟 **الهدف:** مطابقة الرموز أو الكلمات أو العمليات الحسابية المتشابهة في خلايا الشبكة.</li>
+                <li>1️⃣ **اختيار الفئة:** (ملاحظة: يتم اختيار الفئة تلقائيًا بالترتيب في هذه اللعبة).</li>
+                <li>2️⃣ **بدء الجولة:** اضغط زر **بدء الجولة** لعرض الرموز على الشبكة لمدة محددة ⏳ مع عداد يظهر الوقت. خلال هذه الفترة، حاول تذكر أماكن الرموز.</li>
+                <li>3️⃣ **مطابقة الرموز:** بعد انتهاء الوقت ⏰، تعود الخلايا لأرقام فقط، ابدأ بالنقر على خليتين:
+                    <ul>
+                        <li>✅ إذا تطابق الرمزان، يكسب الفريق أو اللاعبين نقطة على كل تطابق صحيح.</li>
+                        <li>❌ إذا لم تتطابق، لا يكسب أي نقطة.</li>
+                    </ul>
+                </li>
+                <li>4️⃣ **بطاقة النجمة ⭐:** إذا كشفت بطاقة **النجمة ⭐**، سيتم إضافة أو خصم نقاط من رصيد فريقك! (تتغير قيمتها عشوائياً بين سالب وموجب وتزيد مع كل مجموعة جولات، ويمكن إعادة فتحها!).</li>
+                <li>5️⃣ **انتهاء الجولة:** عند الكشف عن كل **أزواج الرموز العادية**، ستكون الجولة قد انتهت. اللعبة ستنتقل تلقائيًا إلى الجولة التالية داخل المجموعة.</li>
+                <li>6️⃣ **الانتقال للمجموعة التالية:** بعد انتهاء جميع جولات المجموعة، سيظهر زر **"المجموعة التالية"** للانتقال يدويًا.</li>
+                <li>🔄 **زر إعادة تعيين:** يعيد اللعبة للحالة الابتدائية لتختار عدد الفرق أو تعيد الجولة.</li>
+            </ul>
+            <div class="button-group">
+                <button onclick="hideInstructionsAndShowTeamSelection()">بدء اللعبة</button>
+            </div>
         </div>
     </div>
 
@@ -280,8 +384,23 @@
             createBoard();
         });
 
+        function showAdviceModal() {
+            document.getElementById('adviceModal').style.display = 'flex';
+        }
+
+        function showInstructionsModal() {
+            document.getElementById('adviceModal').style.display = 'none';
+            document.getElementById('instructionsModal').style.display = 'flex';
+        }
+
+        function hideInstructionsAndShowTeamSelection() {
+            document.getElementById('instructionsModal').style.display = 'none';
+            // Start the game logic here
+        }
+
         // Initialize the game
-        createBoard();
+        showAdviceModal();
+        // createBoard();
     </script>
 </body>
 </html>
