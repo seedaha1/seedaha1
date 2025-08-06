@@ -1174,25 +1174,18 @@
         }
 
         // دالة لإخفاء محتوى الخلية وإعادة تعيين الأنماط
-        
-function hideCell(cell) {
-    if (cell.classList.contains('empty') || cell.classList.contains('matched')) return;
-
-    cell.classList.add("hidden");
-    cell.classList.remove("value-revealed", "negative", "positive");
-
-    cell.style.backgroundColor = '';
-    cell.style.color = '';
-    cell.style.fontSize = '0px';
-    cell.style.lineHeight = '0';
-    cell.style.textIndent = '-9999px';
-    cell.style.filter = 'none';
-    cell.style.textShadow = 'none';
-
-    // الحل الفعلي لمشكلة iOS: إزالة الإيموجي أو النص بالكامل
-    cell.innerHTML = '';
-}
-
+        function hideCell(cell) {
+            if (cell.classList.contains('empty') || cell.classList.contains('matched')) return; // لا تخفي الخلايا المطابقة
+            cell.classList.add("hidden");
+            cell.classList.remove("value-revealed", "negative", "positive"); // إزالة فئات -1 و +1
+            cell.style.backgroundColor = ''; // إعادة تعيين لون الخلفية إلى اللون الافتراضي للمخفي
+            cell.textContent = ''; // إخفاء لون المحتوى
+            
+            if (cell.dataset.specialType === 'star-placeholder') {
+                cell.textContent = ''; // إخفاء النص لمربع النجمة
+            } else {
+                cell.textContent = cell.dataset.content; // إعادة المحتوى الأصلي (الإيموجي/النص/العملية)
+            }
             cell.style.filter = 'none';
             cell.style.textShadow = 'none';
             cell.classList.remove('text-content');
