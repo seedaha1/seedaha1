@@ -347,11 +347,7 @@
 
         .cell.hidden {
             background-color: #0055AA; /* lighter blue for hidden cells */
-            /* Removed: color: transparent !important; */
-            font-size: 0; /* Shrink text */
-            line-height: 0; /* Collapse line height */
-            overflow: hidden; /* Hide anything that overflows */
-            text-indent: -9999px; /* Push text off-screen */
+            color: transparent !important; /* يخفي محتوى النص */ /* **تم التعديل هنا** */
             cursor: pointer;
         }
 
@@ -369,7 +365,6 @@
             font-size: 4em; /* ليتناسب مع حجم الخلية الجديدة */
             transform: none; /* إزالة تأثير التحويم */
             color: white !important; /* لضمان أن النص أبيض */
-            text-indent: 0; /* Reset text-indent */
         }
         .cell.value-revealed.negative {
             background-color: #dc3545; /* أحمر */
@@ -396,7 +391,6 @@
             justify-content: center;
             white-space: normal; /* السماح بالالتفاف */
             word-break: break-word; /* كسر الكلمات الطويلة */
-            text-indent: 0; /* Reset text-indent */
         }
 
         /* تعديلات محددة للخط لجولات الكلمات والمرادفات/الأضداد والعمليات الحسابية */
@@ -405,13 +399,11 @@
         .cell[data-round-type="letter-word"],
         .cell[data-round-type="incomplete-word"] {
             font-size: 30px; /* حجم خط أصغر لجولات الكلمات والمرادفات/الأضداد والعمليات الحسابية */
-            text-indent: 0; /* Reset text-indent */
         }
         /* تعديل خاص لحجم خط الإيموجي والنجمة */
         .cell[data-round-type="emoji"],
         .cell[data-special-type="star-placeholder"] { /* */
             font-size: 45px; /* تم التعديل: حجم خط 45px للإيموجي والنجمة (يناسب أرقام جولة التعادل) */
-            text-indent: 0; /* Reset text-indent */
         }
 
 
@@ -751,7 +743,7 @@
 <body>
 
     <div class="legal-notice">
-        ملاحظة: هذه النسخة لشخص واحد فقط وغير قابلة للنشر أو البيع. ومن يخالف ذلك سيتم اتخاذ الإجراءات القانونية في هذا الأمر.
+        ملاحظة: هذه النسخة لشخص واحد فقط وتابعة لمتجر همزة كاف لذلك هي غير قابلة للنشر أو البيع. ومن يخالف ذلك سيتم اتخاذ الإجراءات القانونية في هذا الأمر.
         <span>وللتذكير بذمتك وأمانتك: "قال ﷺ: لا إيمان لمن لا أمانة له، ولا دين لمن لا عهد له"</span>
     </div>
 
@@ -783,7 +775,7 @@
     <div class="modal-overlay" id="adviceModal"> <div class="modal-content">
             <h2>نصيحة علشان نلعب ونستانس… بس بدون ما ننسى الأهم 🌙</h2>
             <ul>
-                <li>⏰ "اللعب ممتع، بس خلّه بعد الصلاة، عشان ما تضيع عليك لا متعة ولا أجر."</li>
+                <li>⏰ "اللعب ممتع، بس خلّه بعد الصلاة، عشان ما تضيع عليك فرض."</li>
                 <li>📖 "اللعبة حلوة، بس القرآن أحلى، خذ لك وقت بين الجولات وارتّح مع كلام الله."</li>
                 <li>🙏 "إذا جاء وقت الصلاة، نوقف اللعب ونكسب رضا رب العالمين."</li>
                 <li>✋ "نلعب ونضحك، لكن ما نخلي اللعب يلهينا عن طاعة الله."</li>
@@ -1201,11 +1193,10 @@ function hideCell(cell) {
     cell.innerHTML = '';
 }
 
-            
             cell.style.filter = 'none';
             cell.style.textShadow = 'none';
-            // cell.classList.remove('text-content'); // تم ترك هذا لأنه قد يؤثر على الأنماط عند الكشف
-            // cell.removeAttribute('data-round-type'); // تم ترك هذا لأنه قد يؤثر على الأنماط عند الكشف
+            cell.classList.remove('text-content');
+            cell.removeAttribute('data-round-type'); // إزالة نوع الجولة
             cell.style.fontSize = ''; // إعادة تعيين حجم الخط الافتراضي
         }
 
@@ -1293,7 +1284,7 @@ function hideCell(cell) {
                     div.textContent = '';
                 } else {
                     div.dataset.content = content;
-                    div.textContent = content; // يتم تعيين النص هنا مبدئيًا
+                    div.textContent = content;
                 }
                 
                 grid.appendChild(div);
@@ -1336,7 +1327,7 @@ function hideCell(cell) {
                 timerInterval = setInterval(() => {
                     currentTimerValue--;
                     timerContainer.textContent = `الوقت: ${currentTimerValue} ثانية`;
-                    if (currentTimerValue <= 0) { // يتوقف عند 0
+                    if (currentTimerValue <= 0) { // تم التعديل: يتوقف عند 0
                         clearInterval(timerInterval);
                         timerInterval = null;
                         console.log("showAllCardsTemporarily: Timer finished, hiding cards.");
@@ -1401,7 +1392,7 @@ function hideCell(cell) {
                 const interval = setInterval(() => {
                     countdown--;
                     countdownNumber.textContent = countdown;
-                    if (countdown <= 0) { // يتوقف عند 0
+                    if (countdown <= 0) { // تم التعديل: يتوقف عند 0
                         clearInterval(interval);
                         countdownOverlay.classList.remove("show");
                         console.log("startRoundProcess: Inter-round countdown finished.");
